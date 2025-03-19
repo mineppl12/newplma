@@ -25,7 +25,7 @@ jobs:
           APP_DIR: ${{ secrets.WORK_DIR }}
         run: |
           # Use SSH to deploy
-          ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "
+          ssh -o StrictHostKeyChecking=no -p 9988 $SERVER_USER@$SERVER_IP "
           cd $APP_DIR &&
           git remote set-url origin git@github.com:mineppl12/newplma.git &&  # Don't forget to change this!!!
           git pull origin main &&
