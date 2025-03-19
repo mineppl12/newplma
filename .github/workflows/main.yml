@@ -3,7 +3,7 @@ name: Deploy Ubuntu Server Project
 on:
   push:
     branches:
-      - main  # Change to your main branch
+      - main
 
 jobs:
   deploy:
@@ -12,11 +12,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Add SSH private key to agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret contains the new private key
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret contains the correct private key
+
+      - name: Check SSH key loaded into agent
+        run: |
+          ssh-add -l  # Lists the SSH keys loaded into the agent
+          # Make sure the correct key is listed here
+
+      - name: Ensure known_hosts file exists
+        run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts  # Ensure known_hosts file exists
+
+      - name: Add SSH Host Key to known_hosts
+        run: |
+          ssh-keyscan -p 9988 $SERVER_IP >> ~/.ssh/known_hosts  # Add the host key for the correct port
 
       - name: Deploy to Server
         env:
@@ -24,10 +38,9 @@ jobs:
           SERVER_IP: ${{ secrets.SSH_HOST }}
           APP_DIR: ${{ secrets.WORK_DIR }}
         run: |
-          # Use SSH to deploy
-          ssh -o StrictHostKeyChecking=no -p 9988 $SERVER_USER@$SERVER_IP "
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 $SERVER_USER@$SERVER_IP "
           cd $APP_DIR &&
-          git remote set-url origin git@github.com:mineppl12/newplma.git &&  # Don't forget to change this!!!
+          git remote set-url origin git@github.com:mineppl12/newplma.git &&  # Make sure this is the SSH URL, not HTTPS
           git pull origin main &&
           npm install &&
           npm run build
