@@ -38,7 +38,7 @@ function Points_History(){
     }, []);
 
     async function init(allData = false){
-        const data = await getData("https://points.jshsus.kr/api/points/history", {allData});
+        const data = await getData("https://points.jshsus.kr/api2/points/history", {allData});
 
         dataRef.current = data;
         setupTable(data);

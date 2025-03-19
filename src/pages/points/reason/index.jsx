@@ -35,7 +35,7 @@ function Points_Reason(){
     }, []);
 
     async function init(){
-        const data = await getData("https://points.jshsus.kr/api/points/reason");
+        const data = await getData("https://points.jshsus.kr/api2/points/reason");
 
         dataRef.current = data;
 

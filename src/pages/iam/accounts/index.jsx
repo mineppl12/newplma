@@ -29,7 +29,7 @@ function IAM_Accounts(){
     async function init(){
         let dataList = [];
 
-        dataList = await getData("https://points.jshsus.kr/api/iam");
+        dataList = await getData("https://points.jshsus.kr/api2/iam");
 
         dataList = dataList.map((x, idx) => {
             const { id, stuid, name, grade, num, gender } = x;

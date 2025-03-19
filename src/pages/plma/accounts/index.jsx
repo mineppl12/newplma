@@ -29,7 +29,7 @@ function PLMA_Accounts(){
     async function init(){
         let dataList = [];
 
-        dataList = await getData("https://points.jshsus.kr/api/points/view");
+        dataList = await getData("https://points.jshsus.kr/api2/points/view");
 
         dataList = dataList.map((x, idx) => {
             const { id, stuid, grade, num, name } = x;

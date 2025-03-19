@@ -28,7 +28,7 @@ function Case_Control(){
     }, []);
 
     async function init(){
-        let dataList = await getData("https://points.jshsus.kr/api/remote/case");
+        let dataList = await getData("https://points.jshsus.kr/api2/remote/case");
         
         dataList = dataList.map((x, idx) => {
             const { id, status, name, updatedAt, updatedBy } = x;

@@ -28,7 +28,7 @@ function MyPoints_View(){
     }, []);
 
     async function init(){
-        const userInfoData = await getData("https://points.jshsus.kr/api/user", { userID });
+        const userInfoData = await getData("https://points.jshsus.kr/api2/user", { userID });
         if (userInfoData["msg"]) return;
         
         const { name, stuid, plus, minus, history } = userInfoData;
