@@ -30,7 +30,7 @@ const REASONS = [
 function Points_Apply() {
   const [columns, setColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [selected, setSelected] = useState("");
+  const [users, setUsers] = useState([]);
 
   const [inputs, setInputs] = useState({
     grade: 1,
@@ -39,13 +39,14 @@ function Points_Apply() {
     reason: 0,
     plusPoints: 0,
     minusPoints: 0,
-    act_date: "",
+    act_date: new Date().toISOString().split("T")[0], // 오늘 날짜로 초기화
   });
   const reasonCaption = () => REASONS[inputs.reason].reason;
 
   const handleChange = (e) => {
     const { name, value } = e.target; // name 속성 가져오기
 
+    alert(value);
     setInputs((prevState) => ({
       ...prevState,
       [name]: value,
@@ -80,9 +81,11 @@ function Points_Apply() {
   }, []);
 
   async function init() {
-    let testList = [];
+    const data = await getData("https://points.jshsus.kr/api2/points/user");
+    setUsers(data);
+    console.log(data);
 
-    setTableData(testList);
+    setTableData([]);
     setColumns([
       { data: "번호" },
       { data: "일자" },
@@ -237,7 +240,7 @@ function Points_Apply() {
             <Card.Text className="label">임의 표시 정보</Card.Text>
             <Row className="g-2">
               {/* 기준 일자 */}
-              <Col md={4}>
+              <Col md={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light text-dark">
                     기준 일자
@@ -252,7 +255,7 @@ function Points_Apply() {
               </Col>
 
               {/* 부여 사유 */}
-              <Col md={8}>
+              <Col md={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light text-dark">
                     부여 사유
