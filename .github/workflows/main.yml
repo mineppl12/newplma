@@ -12,11 +12,20 @@ jobs:
     steps:
     - name: install ssh keys
       run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        # Create the SSH directory if not already present
+        mkdir -p ~/.ssh
+        
+        # Install the private key from GitHub Secrets
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa  # 권한 설정
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+        
+        # Set proper file permissions for the private key
+        chmod 600 ~/.ssh/id_rsa
+        
+        # Scan the SSH host and add to known_hosts to prevent SSH prompts
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        
     - name: connect and pull
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "set -e; cd ${{ secrets.WORK_DIR }} && git reset --hard HEAD && git pull && npm run build && pm2 restart newPLMA"
+    
     - name: cleanup
       run: rm -rf ~/.ssh
