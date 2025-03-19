@@ -3,50 +3,57 @@ import { useState, useEffect } from "react";
 
 import "./index.scss";
 
-import { Card, Button, Form, InputGroup, Row, Col } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Form,
+  InputGroup,
+  Row,
+  Col,
+  Dropdown,
+} from "react-bootstrap";
 import DataTable from "~shared/ui/datatable";
 
 import getData from "~shared/scripts/getData";
-
-const REASONS = [
-  { id: 0, reason: "" },
-  { id: 1, reason: "사유 1" },
-  { id: 2, reason: "사유 2" },
-  { id: 3, reason: "사유 3" },
-  { id: 4, reason: "사유 4" },
-  { id: 5, reason: "사유 5" },
-  { id: 6, reason: "사유 6" },
-  { id: 7, reason: "사유 7" },
-  { id: 8, reason: "사유 8" },
-  { id: 9, reason: "사유 9" },
-  { id: 10, reason: "사유 10" },
-  { id: 11, reason: "사유 11" },
-  { id: 12, reason: "사유 12" },
-  { id: 13, reason: "사유 13" },
-  { id: 14, reason: "사유 14" },
-  { id: 15, reason: "사유 15" },
-];
 
 function Points_Apply() {
   const [columns, setColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [users, setUsers] = useState([]);
-
+  const [reasons, setReasons] = useState([]);
+  const [userSearchKeyword, setUserSearchKeyword] = useState("");
+  const [reasonSearchKeyword, setReasonSearchKeyword] = useState("");
   const [inputs, setInputs] = useState({
     grade: 1,
     classNum: 1,
     studentNum: 1,
+    name,
     reason: 0,
     plusPoints: 0,
     minusPoints: 0,
     act_date: new Date().toISOString().split("T")[0], // 오늘 날짜로 초기화
   });
-  const reasonCaption = () => REASONS[inputs.reason].reason;
+
+  const reasonCaption = reasons[inputs.reason]?.title || "";
+
+  const handleSearch = (e) => {
+    if (e.target.name == "user") setUserSearchKeyword(e.target.value);
+    else if (e.target.name == "reason") setReasonSearchKeyword(e.target.value);
+  };
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(userSearchKeyword) ||
+      user.stuid.toString().includes(userSearchKeyword)
+  );
+
+  const filteredReasons = reasons.filter((reason) =>
+    reason.title.toLowerCase().includes(reasonSearchKeyword)
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target; // name 속성 가져오기
 
-    alert(value);
     setInputs((prevState) => ({
       ...prevState,
       [name]: value,
@@ -58,17 +65,29 @@ function Points_Apply() {
     // const stuid = `${grade}${classNum}${studentNum}`;
   };
 
-  const handleSelect = (e) => {
-    const { value } = e.target; // name 속성 가져오기
-    const grade = parseInt(value.substring(0, 1));
-    const classNum = parseInt(value.substring(1, 2));
-    const studentNum = parseInt(value.substring(2));
+  const handleSelectUser = (e) => {
+    const name = e.target.getAttribute("name");
+    const value = e.target.getAttribute("value");
+
+    const grade = Math.floor(value / 1000);
+    const classNum = Math.floor((value % 1000) / 100);
+    const studentNum = value % 100;
 
     setInputs((prev) => ({
       ...prev,
       grade,
       classNum,
       studentNum,
+      name,
+    }));
+  };
+
+  const handleSelectReason = (e) => {
+    const value = e.target.getAttribute("value");
+    console.log(value);
+    setInputs((prev) => ({
+      ...prev,
+      reason: parseInt(value),
     }));
   };
 
@@ -81,9 +100,10 @@ function Points_Apply() {
   }, []);
 
   async function init() {
-    const data = await getData("https://points.jshsus.kr/api2/points/user");
-    setUsers(data);
-    console.log(data);
+    const users = await getData("https://points.jshsus.kr/api2/user");
+    const reasons = await getData("https://points.jshsus.kr/api2/reason");
+    setUsers(users);
+    setReasons(reasons);
 
     setTableData([]);
     setColumns([
@@ -112,21 +132,47 @@ function Points_Apply() {
             <Card.Text className="label">학생 정보 입력</Card.Text>
 
             <Form onSubmit={handleSubmit}>
-              {/* Select 박스 (상단에 위치) */}
-              <Form.Group className="mb-3">
-                <Form.Label>선택</Form.Label>
-                <Form.Select
-                  name="selectedOption"
-                  value={inputs.selectedOption}
-                  onChange={handleSelect}
+              <Dropdown className="mb-3">
+                <Dropdown.Toggle variant="">
+                  {inputs.name} ({inputs.grade}
+                  {inputs.classNum}
+                  {inputs.studentNum.toString().padStart(2, "0")})
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu
+                  style={{ maxHeight: "200px", overflowY: "auto", padding: 0 }}
                 >
-                  <option value="">학번 찾기</option>
-                  {/* <option value="option1">옵션 1</option> */}
-                </Form.Select>
-              </Form.Group>
+                  {/* 옵션 목록 */}
+                  <Form.Control
+                    type="text"
+                    name="user"
+                    onChange={handleSearch}
+                    style={{
+                      position: "sticky",
+                      top: "0px",
+                      backgroundColor: "white",
+                      borderBottom: "1px solid #ddd",
+                      zIndex: "10",
+                      outline: "none",
+                      boxShadow: "none",
+                    }}
+                  />
+
+                  {filteredUsers.map((user) => (
+                    <Dropdown.Item
+                      key={user.stuid}
+                      name={user.name}
+                      value={user.stuid}
+                      onClick={handleSelectUser}
+                    >
+                      {user.name} ({user.stuid})
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
 
               {/* 학년 입력 */}
-              <Row className="g-2">
+              <Row className="g-2 mb-3">
                 <Col md>
                   <InputGroup>
                     <InputGroup.Text className="bg-light text-dark">
@@ -185,23 +231,52 @@ function Points_Apply() {
             </Form>
 
             <Card.Text className="label">발급 내용 입력</Card.Text>
-            <Row className="g-2">
+            <Row className="g-2 mb-3">
               <Col md={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light text-dark">
                     기준 규정
                   </InputGroup.Text>
-                  <Form.Select
-                    name="reason"
-                    // value={inputs.reason}
-                    onChange={handleChange}
-                  >
-                    {REASONS.map((reason) => (
-                      <option key={reason.id} value={reason.id}>
-                        {reason.reason}
-                      </option>
-                    ))}
-                  </Form.Select>
+
+                  <Dropdown className="mb-3">
+                    <Dropdown.Toggle variant="">
+                      {reasonCaption || "사유 선택"}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu
+                      style={{
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                        padding: 0,
+                      }}
+                    >
+                      {/* 옵션 목록 */}
+                      <Form.Control
+                        type="text"
+                        name="reason"
+                        onChange={handleSearch}
+                        style={{
+                          position: "sticky",
+                          top: "0px",
+                          backgroundColor: "white",
+                          borderBottom: "1px solid #ddd",
+                          zIndex: "10",
+                          outline: "none",
+                          boxShadow: "none",
+                        }}
+                      />
+
+                      {filteredReasons.map((reason, idx) => (
+                        <Dropdown.Item
+                          key={idx}
+                          value={reason.id - 1}
+                          onClick={handleSelectReason}
+                        >
+                          {reason.title}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </InputGroup>
               </Col>
 
@@ -263,7 +338,7 @@ function Points_Apply() {
                   <Form.Control
                     type="text"
                     name="reasonCaption"
-                    value={reasonCaption()}
+                    value={reasonCaption}
                     onChange={handleChange}
                     disabled
                     placeholder=""
