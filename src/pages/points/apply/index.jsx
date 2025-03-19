@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
-import "./index.scss";
+import './index.scss'
 
 import {
   Card,
@@ -51,8 +51,8 @@ function Points_Apply() {
     reason.title.toLowerCase().includes(reasonSearchKeyword)
   );
 
-  const handleChange = (e) => {
-    const { name, value } = e.target; // name 속성 가져오기
+    const handleChange = (e) => {
+        const { name, value } = e.target // name 속성 가져오기
 
     setInputs((prevState) => ({
       ...prevState,
@@ -60,10 +60,10 @@ function Points_Apply() {
     }));
   };
 
-  const handleClick = (e) => {
-    const { grade, classNum, studentNum } = inputs;
-    // const stuid = `${grade}${classNum}${studentNum}`;
-  };
+    const handleClick = (e) => {
+        const { grade, classNum, studentNum } = inputs
+        // const stuid = `${grade}${classNum}${studentNum}`;
+    }
 
   const handleSelectUser = (e) => {
     const name = e.target.getAttribute("name");
@@ -91,13 +91,13 @@ function Points_Apply() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // 폼의 기본 제출 동작 방지
-  };
+    const handleSubmit = (e) => {
+        e.preventDefault() // 폼의 기본 제출 동작 방지
+    }
 
-  useEffect(() => {
-    init();
-  }, []);
+    useEffect(() => {
+        init()
+    }, [])
 
   async function init() {
     const users = await getData("https://points.jshsus.kr/api2/user");
@@ -121,15 +121,15 @@ function Points_Apply() {
     ]);
   }
 
-  return (
-    <>
-      <div id="points_apply">
-        <Card>
-          <Card.Header>
-            <Card.Title>상벌점 부여</Card.Title>
-          </Card.Header>
-          <Card.Body>
-            <Card.Text className="label">학생 정보 입력</Card.Text>
+    return (
+        <>
+            <div id="points_apply">
+                <Card>
+                    <Card.Header>
+                        <Card.Title>상벌점 부여</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text className="label">학생 정보 입력</Card.Text>
 
             <Form onSubmit={handleSubmit}>
               <Dropdown className="mb-3">
@@ -191,44 +191,44 @@ function Points_Apply() {
                   </InputGroup>
                 </Col>
 
-                {/* 반 입력 */}
-                <Col md>
-                  <InputGroup>
-                    <InputGroup.Text className="bg-light text-dark">
-                      반
-                    </InputGroup.Text>{" "}
-                    {/* 옅은 회색 배경으로 수정 */}
-                    <Form.Control
-                      type="number"
-                      name="classNum"
-                      value={inputs.classNum}
-                      onChange={handleChange}
-                      placeholder="반"
-                      min="1"
-                      max="4"
-                    />
-                  </InputGroup>
-                </Col>
+                                {/* 반 입력 */}
+                                <Col md>
+                                    <InputGroup>
+                                        <InputGroup.Text className="bg-light text-dark">
+                                            반
+                                        </InputGroup.Text>{' '}
+                                        {/* 옅은 회색 배경으로 수정 */}
+                                        <Form.Control
+                                            type="number"
+                                            name="classNum"
+                                            value={inputs.classNum}
+                                            onChange={handleChange}
+                                            placeholder="반"
+                                            min="1"
+                                            max="4"
+                                        />
+                                    </InputGroup>
+                                </Col>
 
-                {/* 번호 입력 */}
-                <Col md>
-                  <InputGroup>
-                    <InputGroup.Text className="bg-light text-dark">
-                      번호
-                    </InputGroup.Text>{" "}
-                    <Form.Control
-                      type="number"
-                      name="studentNum"
-                      value={inputs.studentNum}
-                      onChange={handleChange}
-                      placeholder="번호"
-                      min="1"
-                      max="21"
-                    />
-                  </InputGroup>
-                </Col>
-              </Row>
-            </Form>
+                                {/* 번호 입력 */}
+                                <Col md>
+                                    <InputGroup>
+                                        <InputGroup.Text className="bg-light text-dark">
+                                            번호
+                                        </InputGroup.Text>{' '}
+                                        <Form.Control
+                                            type="number"
+                                            name="studentNum"
+                                            value={inputs.studentNum}
+                                            onChange={handleChange}
+                                            placeholder="번호"
+                                            min="1"
+                                            max="21"
+                                        />
+                                    </InputGroup>
+                                </Col>
+                            </Row>
+                        </Form>
 
             <Card.Text className="label">발급 내용 입력</Card.Text>
             <Row className="g-2 mb-3">
@@ -280,54 +280,54 @@ function Points_Apply() {
                 </InputGroup>
               </Col>
 
-              {/* 상점 입력 */}
-              <Col md={3}>
-                <InputGroup>
-                  <InputGroup.Text className="bg-light text-dark">
-                    상점
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="number"
-                    name="plusPoints"
-                    value={inputs.plusPoints}
-                    onChange={handleChange}
-                    min="0"
-                  />
-                </InputGroup>
-              </Col>
+                            {/* 상점 입력 */}
+                            <Col md={3}>
+                                <InputGroup>
+                                    <InputGroup.Text className="bg-light text-dark">
+                                        상점
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        type="number"
+                                        name="plusPoints"
+                                        value={inputs.plusPoints}
+                                        onChange={handleChange}
+                                        min="0"
+                                    />
+                                </InputGroup>
+                            </Col>
 
-              {/* 벌점 입력 */}
-              <Col md={3}>
-                <InputGroup>
-                  <InputGroup.Text className="bg-light text-dark">
-                    벌점
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="number"
-                    name="minusPoints"
-                    value={inputs.minusPoints}
-                    onChange={handleChange}
-                    min="0"
-                  />
-                </InputGroup>
-              </Col>
-            </Row>
-            <Card.Text className="label">임의 표시 정보</Card.Text>
-            <Row className="g-2">
-              {/* 기준 일자 */}
-              <Col md={6}>
-                <InputGroup>
-                  <InputGroup.Text className="bg-light text-dark">
-                    기준 일자
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="date"
-                    name="act_date"
-                    value={inputs.act_date}
-                    onChange={handleChange}
-                  />
-                </InputGroup>
-              </Col>
+                            {/* 벌점 입력 */}
+                            <Col md={3}>
+                                <InputGroup>
+                                    <InputGroup.Text className="bg-light text-dark">
+                                        벌점
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        type="number"
+                                        name="minusPoints"
+                                        value={inputs.minusPoints}
+                                        onChange={handleChange}
+                                        min="0"
+                                    />
+                                </InputGroup>
+                            </Col>
+                        </Row>
+                        <Card.Text className="label">임의 표시 정보</Card.Text>
+                        <Row className="g-2">
+                            {/* 기준 일자 */}
+                            <Col md={6}>
+                                <InputGroup>
+                                    <InputGroup.Text className="bg-light text-dark">
+                                        기준 일자
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        type="date"
+                                        name="act_date"
+                                        value={inputs.act_date}
+                                        onChange={handleChange}
+                                    />
+                                </InputGroup>
+                            </Col>
 
               {/* 부여 사유 */}
               <Col md={6}>
@@ -371,4 +371,4 @@ function Points_Apply() {
   );
 }
 
-export default Points_Apply;
+export default Points_Apply
