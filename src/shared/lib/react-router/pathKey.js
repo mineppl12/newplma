@@ -1,198 +1,198 @@
 export const pathKeys = {
     root: '/',
     home: {
-        root(){
+        root() {
             return {
                 link: pathKeys.root,
-                permission: null
+                permission: null,
             }
-        }
+        },
     },
     about: {
-        root(){
+        root() {
             return {
-                link: pathKeys.root.concat("about/"),
-                permission: null
-            };
-        }
+                link: pathKeys.root.concat('about/'),
+                permission: null,
+            }
+        },
     },
     points: {
-        root(){
-            return pathKeys.root.concat("points/");
+        root() {
+            return pathKeys.root.concat('points/')
         },
-        view(){
+        view() {
             return {
-                link: pathKeys.points.root().concat("view/"),
-                permission: "viewPointsView"
-            };
+                link: pathKeys.points.root().concat('view/'),
+                permission: 'viewPointsView',
+            }
         },
-        apply(){
+        apply() {
             return {
-                link: pathKeys.points.root().concat("apply/"),
-                permission: "viewPointsApply"
-            };
+                link: pathKeys.points.root().concat('apply/'),
+                permission: 'viewPointsApplyOrigin',
+            }
         },
-        history(){
+        history() {
             return {
-                link: pathKeys.points.root().concat("history/"),
-                permission: "viewPointsHistory"
-            };
+                link: pathKeys.points.root().concat('history/'),
+                permission: 'viewPointsHistory',
+            }
         },
-        remarks(){
+        remarks() {
             return {
-                link: pathKeys.points.root().concat("remarks/"),
-                permission: "viewPointsRemarks"
-            };
+                link: pathKeys.points.root().concat('remarks/'),
+                permission: 'viewPointsRemarks',
+            }
         },
-        reason(){
+        reason() {
             return {
-                link: pathKeys.points.root().concat("reason/"),
-                permission: "viewPointsReason"
-            };
+                link: pathKeys.points.root().concat('reason/'),
+                permission: 'viewPointsReason',
+            }
         },
-        logs(){
+        logs() {
             return {
-                link: pathKeys.points.root().concat("logs/"),
-                permission: "viewPointsLogs"
-            };
+                link: pathKeys.points.root().concat('logs/'),
+                permission: 'viewPointsLogs',
+            }
         },
-        fix(){
+        fix() {
             return {
-                link: pathKeys.points.root().concat("fix/"),
-                permission: "viewPointsFix"
-            };
+                link: pathKeys.points.root().concat('fix/'),
+                permission: 'viewPointsFix',
+            }
         },
         myPoints: {
-            root(){
-                return pathKeys.root.concat("myPoints/");
+            root() {
+                return pathKeys.root.concat('myPoints/')
             },
-            view(){
+            view() {
                 return {
-                    link: pathKeys.points.myPoints.root().concat("view/"),
-                    permission: "viewMyPointsView"
+                    link: pathKeys.points.myPoints.root().concat('view/'),
+                    permission: 'viewMyPointsView',
                 }
             },
-            volunteer(){
+            volunteer() {
                 return {
-                    link: pathKeys.points.myPoints.root().concat("volunteer/")
+                    link: pathKeys.points.myPoints.root().concat('volunteer/'),
                 }
-            }
-        }
+            },
+        },
     },
     dorm: {
-        root(){
-            return pathKeys.root.concat("dorm/");
+        root() {
+            return pathKeys.root.concat('dorm/')
         },
-        status(){
+        status() {
             return {
-                link: pathKeys.dorm.root().concat("status/"),
-                permission: "viewDormStatus"
-            };
+                link: pathKeys.dorm.root().concat('status/'),
+                permission: 'viewDormStatus',
+            }
         },
-        settings(){
+        settings() {
             return {
-                link: pathKeys.dorm.root().concat("settings/"),
-                permission: "viewDormSettings"
-            };
+                link: pathKeys.dorm.root().concat('settings/'),
+                permission: 'viewDormSettings',
+            }
         },
-        repair(){
+        repair() {
             return {
-                link: pathKeys.dorm.root().concat("repair/"),
-                permission: "viewDormRepair"
+                link: pathKeys.dorm.root().concat('repair/'),
+                permission: 'viewDormRepair',
             }
         },
         myDorm: {
-            root(){
-                return pathKeys.dorm.root().concat("myDorm/");
+            root() {
+                return pathKeys.dorm.root().concat('myDorm/')
             },
-            view(){
+            view() {
                 return {
-                    link: pathKeys.dorm.myDorm.root().concat("view/"),
-                    permission: "viewMyDormView"
+                    link: pathKeys.dorm.myDorm.root().concat('view/'),
+                    permission: 'viewMyDormView',
                 }
             },
-            repair(){
+            repair() {
                 return {
-                    link: pathKeys.dorm.myDorm.root().concat("repair/"),
-                    permission: "viewMyDormRepair"
+                    link: pathKeys.dorm.myDorm.root().concat('repair/'),
+                    permission: 'viewMyDormRepair',
                 }
-            }
-        }
+            },
+        },
     },
     remote: {
-        root(){
-            return pathKeys.root.concat("remote/");
+        root() {
+            return pathKeys.root.concat('remote/')
         },
         case: {
-            root(){
-                return pathKeys.remote.root().concat("case/");
+            root() {
+                return pathKeys.remote.root().concat('case/')
             },
-            control(){
+            control() {
                 return {
-                    link: pathKeys.remote.case.root().concat("control/"),
-                    permission: "viewRemoteCaseControl"
-                };
+                    link: pathKeys.remote.case.root().concat('control/'),
+                    permission: 'viewRemoteCaseControl',
+                }
             },
-            schedule(){
+            schedule() {
                 return {
-                    link: pathKeys.remote.case.root().concat("schedule/"),
-                    permission: "viewRemoteCaseSchedule"
-                };
+                    link: pathKeys.remote.case.root().concat('schedule/'),
+                    permission: 'viewRemoteCaseSchedule',
+                }
             },
-            history(){
+            history() {
                 return {
-                    link: pathKeys.remote.case.root().concat("history/"),
-                    permission: "viewRemoteCaseHistory"
-                };
+                    link: pathKeys.remote.case.root().concat('history/'),
+                    permission: 'viewRemoteCaseHistory',
+                }
             },
-        }
+        },
     },
     plma: {
-        root(){
-            return pathKeys.root.concat("plma/");
+        root() {
+            return pathKeys.root.concat('plma/')
         },
-        accounts(){
+        accounts() {
             return {
-                link: pathKeys.plma.root().concat("accounts/"),
-                permission: "viewPLMAAccounts"
-            };
+                link: pathKeys.plma.root().concat('accounts/'),
+                permission: 'viewPLMAAccounts',
+            }
         },
     },
     iam: {
-        root(){
-            return pathKeys.root.concat("iam/");
+        root() {
+            return pathKeys.root.concat('iam/')
         },
-        accounts(){
+        accounts() {
             return {
-                link: pathKeys.iam.root().concat("accounts/"),
-                permission: "viewIAMAccounts"
-            };
+                link: pathKeys.iam.root().concat('accounts/'),
+                permission: 'viewIAMAccounts',
+            }
         },
         access() {
             return {
-                link: pathKeys.iam.root().concat("access/"),
-                permission: "viewIAMAccess"
-            };
-        }
+                link: pathKeys.iam.root().concat('access/'),
+                permission: 'viewIAMAccess',
+            }
+        },
     },
     school: {
-        root(){
-            return pathKeys.root.concat("school/");
+        root() {
+            return pathKeys.root.concat('school/')
         },
-        myInfo(){
+        myInfo() {
             return {
-                link: pathKeys.school.root().concat("studentInfo/"),
-                permission: "viewSchoolMyInfo"
+                link: pathKeys.school.root().concat('studentInfo/'),
+                permission: 'viewSchoolMyInfo',
             }
         },
-        reportCard(){
+        reportCard() {
             return {
-                link: pathKeys.school.root().concat("reportCard/"),
-                permission: "viewSchoolReportCard"
+                link: pathKeys.school.root().concat('reportCard/'),
+                permission: 'viewSchoolReportCard',
             }
-        }
+        },
     },
     page404() {
-        return pathKeys.root.concat("404/");
-    }
-};
+        return pathKeys.root.concat('404/')
+    },
+}
