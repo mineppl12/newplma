@@ -24,11 +24,11 @@ jobs:
           SERVER_IP: ${{ secrets.SSH_HOST }}
           APP_DIR: ${{ secrets.WORK_DIR }}
         run: |
-          # Use SSH to deploy
-          ssh -o StrictHostKeyChecking=no -p 9988 $SERVER_USER@$SERVER_IP "
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 $SERVER_USER@$SERVER_IP "
           cd $APP_DIR &&
-          git remote set-url origin git@github.com:mineppl12/newplma.git &&  # Don't forget to change this!!!
+          git remote set-url origin git@github.com:mineppl12/newplma.git &&
           git pull origin main &&
           npm install &&
           npm run build
           "
+
