@@ -1,0 +1,31 @@
+#points_reason{
+    .pointsReasonTable{    
+        .dt-reason{
+            width: 60%;
+        }
+
+        .dt-content{
+            font-weight: bolder;
+
+            .type{
+                color: #fff;
+                padding-inline: 5px;
+                padding-block: 2px;
+                border-radius: 3px;
+                margin-right: 10px;
+
+                &.good { background: limegreen; }
+                &.bad { background: red; }
+            }
+
+            text-wrap: wrap;
+        }
+
+        .dt-button{
+            .editButton{
+                margin-left: .1rem;
+                margin-right: .1rem;
+            }
+        }
+    }
+}

@@ -1,0 +1,87 @@
+@use "~shared/styles/variables.scss" as *;
+
+#dorm_settings{
+    width: 100%;
+    height: 100%;
+
+    .card{
+        .card-header{
+            width: 100%;
+            height: 3rem;
+            border-bottom: 1px solid rgba(0,0,0,.125);
+            padding: 1.25rem;
+            padding-top: calc(.75rem + 1px);
+
+            .card-title{
+                font-size: 1.1rem;
+                font-weight: 400;
+                margin: 0;
+            }
+        }
+
+        .card-body{
+            padding: 1.25rem;
+
+            .card-text.label{
+                margin-bottom: 0.5rem;
+                font-weight: 700;
+                font-size: 1rem;
+            }
+
+            .btn{
+                border-radius: 3px;
+                padding-inline: 1.25rem;
+                margin-right: 1rem;
+            }
+
+            .tableWrap{
+                width: max-content;
+                height: auto;
+
+                .dt-layout-row{
+                    margin: 0;
+                }
+            }
+
+            .dormSettingsTable{
+                tr{
+                    cursor: pointer;
+        
+                    &:hover { background: rgba(0, 0, 0, .03); }
+                }
+
+                th{
+                    background: $jshsusColorDark;
+                    color: $textColorLight;
+                    padding-block: 0.25rem;
+                }
+
+                td{
+                    height: 40px;
+                    padding-inline: 1.75rem;
+                    &:hover { background: rgba(0, 0, 0, .1); }
+                }
+        
+                th.dt-center, td.dt-center{
+                    text-align: center;
+                    font-size: 16px;
+                    text-wrap: nowrap;
+                }
+        
+                td.dt-first{
+                    background: $jshsusColorLight2;
+                    color: $textColorLight;
+                    padding-inline: 0.75rem;
+                    font-weight: 700;
+                }
+        
+                a{
+                    color: #7696ff;
+                    text-decoration: none;
+        
+                    &:hover { color: #576db6; }
+                }
+            }
+        }
+    }
+}
