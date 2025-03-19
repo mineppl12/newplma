@@ -30,7 +30,7 @@ jobs:
 
       - name: Add SSH Host Key to known_hosts
         run: |
-          ssh-keyscan -p 9988 $SERVER_IP >> ~/.ssh/known_hosts  # Add the host key for the correct port
+          ssh-keyscan -p 9988 $SSH_HOST >> ~/.ssh/known_hosts  # Add the host key for the correct port
 
       - name: Deploy to Server
         env:
