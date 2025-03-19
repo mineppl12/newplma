@@ -8,26 +8,47 @@ import DataTable from "~shared/ui/datatable";
 
 import getData from "~shared/scripts/getData";
 
+const REASONS = [
+  { id: 0, reason: "" },
+  { id: 1, reason: "사유 1" },
+  { id: 2, reason: "사유 2" },
+  { id: 3, reason: "사유 3" },
+  { id: 4, reason: "사유 4" },
+  { id: 5, reason: "사유 5" },
+  { id: 6, reason: "사유 6" },
+  { id: 7, reason: "사유 7" },
+  { id: 8, reason: "사유 8" },
+  { id: 9, reason: "사유 9" },
+  { id: 10, reason: "사유 10" },
+  { id: 11, reason: "사유 11" },
+  { id: 12, reason: "사유 12" },
+  { id: 13, reason: "사유 13" },
+  { id: 14, reason: "사유 14" },
+  { id: 15, reason: "사유 15" },
+];
+
 function Points_Apply() {
   const [columns, setColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [selected, setSelected] = useState("");
+
   const [inputs, setInputs] = useState({
     grade: 1,
     classNum: 1,
     studentNum: 1,
-    reason: "",
+    reason: 0,
     plusPoints: 0,
     minusPoints: 0,
     act_date: "",
-    reasonCaption: "",
   });
+  const reasonCaption = () => REASONS[inputs.reason].reason;
 
   const handleChange = (e) => {
     const { name, value } = e.target; // name 속성 가져오기
+
     setInputs((prevState) => ({
       ...prevState,
-      [name]: value, // 동적으로 필드 업데이트
+      [name]: value,
     }));
   };
 
@@ -42,11 +63,12 @@ function Points_Apply() {
     const classNum = parseInt(value.substring(1, 2));
     const studentNum = parseInt(value.substring(2));
 
-    setInputs({
+    setInputs((prev) => ({
+      ...prev,
       grade,
       classNum,
       studentNum,
-    });
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -59,14 +81,6 @@ function Points_Apply() {
 
   async function init() {
     let testList = [];
-    const data = await getData("https://points.jshsus.kr/api2/points/view");
-
-    testList = data.map((x, idx) => {
-      const { stuid, grade, num, name, plus, minus } = x;
-      const className = x.class;
-
-      return [stuid, grade, className, num, name, plus, minus, 0, plus - minus];
-    });
 
     setTableData(testList);
     setColumns([
@@ -169,7 +183,6 @@ function Points_Apply() {
 
             <Card.Text className="label">발급 내용 입력</Card.Text>
             <Row className="g-2">
-              {/* 사유 선택 */}
               <Col md={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light text-dark">
@@ -177,13 +190,14 @@ function Points_Apply() {
                   </InputGroup.Text>
                   <Form.Select
                     name="reason"
-                    value={inputs.reason}
+                    // value={inputs.reason}
                     onChange={handleChange}
                   >
-                    <option value="">사유 선택</option>
-                    <option value="reason1">사유 1</option>
-                    <option value="reason2">사유 2</option>
-                    {/* 추가 사유 옵션 */}
+                    {REASONS.map((reason) => (
+                      <option key={reason.id} value={reason.id}>
+                        {reason.reason}
+                      </option>
+                    ))}
                   </Form.Select>
                 </InputGroup>
               </Col>
@@ -231,14 +245,14 @@ function Points_Apply() {
                   <Form.Control
                     type="date"
                     name="act_date"
-                    value={inputs.act_date || ""}
+                    value={inputs.act_date}
                     onChange={handleChange}
                   />
                 </InputGroup>
               </Col>
 
               {/* 부여 사유 */}
-              <Col md={6}>
+              <Col md={8}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light text-dark">
                     부여 사유
@@ -246,9 +260,10 @@ function Points_Apply() {
                   <Form.Control
                     type="text"
                     name="reasonCaption"
-                    value={inputs.reasonCaption || ""}
+                    value={reasonCaption()}
                     onChange={handleChange}
-                    placeholder="부여 사유 입력"
+                    disabled
+                    placeholder=""
                   />
                 </InputGroup>
               </Col>
