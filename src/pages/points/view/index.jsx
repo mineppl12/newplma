@@ -20,18 +20,18 @@ function Points_View() {
     let testList = [];
     const data = await getData('/api/points');
     testList = data.map((x, idx) => {
-      const { stuid, grade, num, name, plus, minus } = x;
+      const { id, stuid, grade, num, name, plus, minus } = x;
       const className = x.class;
 
       return [
-        <NavLink to="/check_history" key={idx}>
+        <NavLink to={`/points/user_history/${id}`} key={idx}>
           {stuid}
         </NavLink>,
         stuid,
         grade,
         className,
         num,
-        <NavLink to="/check_history" key={idx}>
+        <NavLink to={`/points/user_history/${id}`} key={idx}>
           {name}
         </NavLink>,
         name,
