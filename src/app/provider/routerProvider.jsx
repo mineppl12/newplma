@@ -28,6 +28,7 @@ import Dorm_Status from '~pages/dorm/status';
 import Dorm_Settings from '~pages/dorm/settings';
 
 import Case_Control from '~pages/remote/case/control';
+import Case_History from '~pages/remote/case/history';
 
 import PLMA_Accounts from '~pages/plma/accounts';
 import IAM_Accounts from '~pages/iam/accounts';
@@ -120,6 +121,7 @@ const routesWithPermissions = [
     { pathKey: pathKeys.iam.accounts(), element: <IAM_Accounts /> },
 
     { pathKey: pathKeys.remote.case.control(), element: <Case_Control /> },
+    { pathKey: pathKeys.remote.case.history(), element: <Case_History /> },
 ];
 
 const filteredRoutes = routesWithPermissions
