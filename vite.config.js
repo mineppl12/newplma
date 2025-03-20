@@ -12,23 +12,23 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
                 secure: false,
-                ws: true
-            }
-        }
+                ws: true,
+            },
+        },
     },
     resolve: {
         alias: [
             {
-                find: "~pages",
-                replacement: path.resolve(__dirname, "src/pages")
+                find: '~pages',
+                replacement: path.resolve(__dirname, 'src/pages'),
             },
             {
-                find: "~shared",
-                replacement: path.resolve(__dirname, "src/shared")
+                find: '~shared',
+                replacement: path.resolve(__dirname, 'src/shared'),
             },
             {
-                find: "@components",
-                replacement: path.resolve(__dirname, "src/components"),
+                find: '@components',
+                replacement: path.resolve(__dirname, 'src/components'),
             },
         ],
     },

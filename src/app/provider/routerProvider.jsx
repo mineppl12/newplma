@@ -3,41 +3,42 @@ import {
     RouterProvider,
     Outlet,
     useLocation,
-} from 'react-router-dom'
+} from 'react-router-dom';
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { fas } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 library.add(fas)
 
 // ###
 
-import Home from '~pages/home'
-import About from '~pages/about'
+import Home from '~pages/home';
+import About from '~pages/about';
 
-import Points_View from '~pages/points/view'
-import Points_Apply from '~pages/points/apply'
-import Points_History from '~pages/points/history'
-import Points_Remarks from '~pages/points/remarks'
-import Points_Reason from '~pages/points/reason'
+import Points_View from '~pages/points/view';
+import Points_Apply from '~pages/points/apply';
+import Points_History from '~pages/points/history';
+import Points_UserHistory from '~pages/points/userHistory';
+import Points_Remarks from '~pages/points/remarks';
+import Points_Reason from '~pages/points/reason';
 
-import MyPoints_View from '~pages/myPoints/view'
+import MyPoints_View from '~pages/myPoints/view';
 
-import Dorm_Status from '~pages/dorm/status'
-import Dorm_Settings from '~pages/dorm/settings'
+import Dorm_Status from '~pages/dorm/status';
+import Dorm_Settings from '~pages/dorm/settings';
 
-import Case_Control from '~pages/remote/case/control'
+import Case_Control from '~pages/remote/case/control';
 
-import PLMA_Accounts from '~pages/plma/accounts'
-import IAM_Accounts from '~pages/iam/accounts'
+import PLMA_Accounts from '~pages/plma/accounts';
+import IAM_Accounts from '~pages/iam/accounts';
 
-import Page404 from '~pages/404'
+import Page404 from '~pages/404';
 
 // ###
 
-import Navbar from '~shared/ui/navbar'
-import Sidebar from '~shared/ui/sidebar'
-import { pathKeys } from '~shared/lib/react-router/pathKey.js'
+import Navbar from '~shared/ui/navbar';
+import Sidebar from '~shared/ui/sidebar';
+import { pathKeys } from '~shared/lib/react-router/pathKey.js';
 
 const userType = {
     student: new Set([
@@ -53,6 +54,7 @@ const userType = {
         'viewPointsView',
         'viewPointsApply',
         'viewPointsEdit',
+        'viewPointsUserHistory',
         'viewPointsHistory',
         'viewPointsRemarks',
         'viewPointsReason',
@@ -74,13 +76,13 @@ const userType = {
         'viewIAMAccounts',
         'viewIAMAccess',
     ]),
-}
+};
 
-const userPermissions = userType['admin']
+const userPermissions = userType['admin'];
 
 function Layout() {
-    const location = useLocation()
-    const isFullScreen = location.pathname === pathKeys.about.root().link
+    const location = useLocation();
+    const isFullScreen = location.pathname === pathKeys.about.root().link;
 
     return (
         <>
@@ -102,6 +104,10 @@ const routesWithPermissions = [
     { pathKey: pathKeys.points.view(), element: <Points_View /> },
     { pathKey: pathKeys.points.apply(), element: <Points_Apply /> },
     { pathKey: pathKeys.points.history(), element: <Points_History /> },
+    {
+        pathKey: pathKeys.points.user_history(),
+        element: <Points_UserHistory />,
+    },
     { pathKey: pathKeys.points.remarks(), element: <Points_Remarks /> },
     { pathKey: pathKeys.points.reason(), element: <Points_Reason /> },
 
@@ -122,7 +128,7 @@ const filteredRoutes = routesWithPermissions
             !route.pathKey.permission ||
             userPermissions.has(route.pathKey.permission)
     )
-    .map(({ pathKey, element }) => ({ path: pathKey.link, element }))
+    .map(({ pathKey, element }) => ({ path: pathKey.link, element }));
 
 const browserRouter = createBrowserRouter([
     {
@@ -132,5 +138,5 @@ const browserRouter = createBrowserRouter([
 ])
 
 export default function AppRouter() {
-    return <RouterProvider router={browserRouter} />
+    return <RouterProvider router={browserRouter} />;
 }

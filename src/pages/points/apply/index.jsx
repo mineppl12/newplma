@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import './index.scss'
+import './index.scss';
 
 import {
     Card,
@@ -11,18 +11,18 @@ import {
     Row,
     Col,
     Dropdown,
-} from 'react-bootstrap'
-import DataTable from '~shared/ui/datatable'
+} from 'react-bootstrap';
+import DataTable from '~shared/ui/datatable';
 
-import getData from '~shared/scripts/getData'
+import getData from '~shared/scripts/getData';
 
 function Points_Apply() {
-    const [columns, setColumns] = useState([])
-    const [tableData, setTableData] = useState([])
-    const [users, setUsers] = useState([])
-    const [reasons, setReasons] = useState([])
-    const [userSearchKeyword, setUserSearchKeyword] = useState('')
-    const [reasonSearchKeyword, setReasonSearchKeyword] = useState('')
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [reasons, setReasons] = useState([]);
+    const [userSearchKeyword, setUserSearchKeyword] = useState('');
+    const [reasonSearchKeyword, setReasonSearchKeyword] = useState('');
     const [inputs, setInputs] = useState({
         grade: 1,
         classNum: 1,
@@ -32,47 +32,47 @@ function Points_Apply() {
         plusPoints: 0,
         minusPoints: 0,
         act_date: new Date().toISOString().split('T')[0], // 오늘 날짜로 초기화
-    })
+    });
 
-    const reasonCaption = reasons[inputs.reason]?.title || ''
+    const reasonCaption = reasons[inputs.reason]?.title || '';
 
     const handleSearch = (e) => {
-        if (e.target.name == 'user') setUserSearchKeyword(e.target.value)
+        if (e.target.name == 'user') setUserSearchKeyword(e.target.value);
         else if (e.target.name == 'reason')
-            setReasonSearchKeyword(e.target.value)
-    }
+            setReasonSearchKeyword(e.target.value);
+    };
 
     const filteredUsers = users.filter(
         (user) =>
             user.name.toLowerCase().includes(userSearchKeyword) ||
             user.stuid.toString().includes(userSearchKeyword)
-    )
+    );
 
     const filteredReasons = reasons.filter((reason) =>
         reason.title.toLowerCase().includes(reasonSearchKeyword)
-    )
+    );
 
     const handleChange = (e) => {
-        const { name, value } = e.target // name 속성 가져오기
+        const { name, value } = e.target; // name 속성 가져오기
 
         setInputs((prevState) => ({
             ...prevState,
             [name]: value,
-        }))
-    }
+        }));
+    };
 
     const handleClick = (e) => {
-        const { grade, classNum, studentNum } = inputs
+        const { grade, classNum, studentNum } = inputs;
         // const stuid = `${grade}${classNum}${studentNum}`;
-    }
+    };
 
     const handleSelectUser = (e) => {
-        const name = e.target.getAttribute('name')
-        const value = e.target.getAttribute('value')
+        const name = e.target.getAttribute('name');
+        const value = e.target.getAttribute('value');
 
-        const grade = Math.floor(value / 1000)
-        const classNum = Math.floor((value % 1000) / 100)
-        const studentNum = value % 100
+        const grade = Math.floor(value / 1000);
+        const classNum = Math.floor((value % 1000) / 100);
+        const studentNum = value % 100;
 
         setInputs((prev) => ({
             ...prev,
@@ -80,33 +80,33 @@ function Points_Apply() {
             classNum,
             studentNum,
             name,
-        }))
-    }
+        }));
+    };
 
     const handleSelectReason = (e) => {
-        const value = e.target.getAttribute('value')
-        console.log(value)
+        const value = e.target.getAttribute('value');
+        console.log(value);
         setInputs((prev) => ({
             ...prev,
             reason: parseInt(value),
-        }))
-    }
+        }));
+    };
 
     const handleSubmit = (e) => {
-        e.preventDefault() // 폼의 기본 제출 동작 방지
-    }
+        e.preventDefault(); // 폼의 기본 제출 동작 방지
+    };
 
     useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     async function init() {
-        const users = await getData('https://points.jshsus.kr/api2/user')
-        const reasons = await getData('https://points.jshsus.kr/api2/reason')
-        setUsers(users)
-        setReasons(reasons)
+        const users = await getData('https://points.jshsus.kr/api2/user');
+        const reasons = await getData('https://points.jshsus.kr/api2/reason');
+        setUsers(users);
+        setReasons(reasons);
 
-        setTableData([])
+        setTableData([]);
         setColumns([
             { data: '번호' },
             { data: '일자' },
@@ -119,7 +119,7 @@ function Points_Apply() {
             { data: '처리 후 합계' },
             { data: '사유코드' },
             { data: '사유' },
-        ])
+        ]);
     }
 
     return (
@@ -353,7 +353,6 @@ function Points_Apply() {
                                         name="reasonCaption"
                                         value={reasonCaption}
                                         onChange={handleChange}
-                                        disabled
                                         placeholder=""
                                     />
                                 </InputGroup>
@@ -377,13 +376,17 @@ function Points_Apply() {
                                 className="pointsApplyTable"
                                 data={tableData}
                                 columns={columns}
+                                options={{
+                                    search: false
+                                }}
+                                order={[0, 'desc']}
                             />
                         </div>
                     </Card.Body>
                 </Card>
             </div>
         </>
-    )
+    );
 }
 
-export default Points_Apply
+export default Points_Apply;
