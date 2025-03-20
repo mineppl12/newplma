@@ -146,8 +146,10 @@ function Points_Apply() {
       inputs.reason,
       reasonCaption,
     ];
-    setTableData((prev) => [...prev, newEntry]);
-    console.log(tableData);
+
+    const newTableData = [...tableData, newEntry];
+
+    setTableData(newTableData);
   };
 
   const handleSelectUser = (e) => {
@@ -471,11 +473,12 @@ function Points_Apply() {
               variant="danger"
               type="button"
               onClick={() => {
-                setTableData((prev) => {
-                  if (prev.length === 0) return prev; // 배열이 비어있으면 그대로 반환
-                  console.log(prev);
-                  return prev.slice(0, -1); // 마지막 요소 제거
-                });
+                if (tableData.length == 0) return;
+
+                const newTableData = [...tableData];
+
+                newTableData.shift();
+                setTableData(newTableData);
               }}
             >
               마지막 행 삭제
