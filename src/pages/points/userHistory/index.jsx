@@ -1,33 +1,24 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 
-import axios from 'axios';
 import moment from 'moment';
-
-import DataTable from '~shared/ui/datatable';
-import MySwal from '~shared/ui/sweetalert';
+import getData from '~shared/scripts/getData.js';
 
 import './index.scss';
 
-import { Card, Button, Dropdown, Form } from 'react-bootstrap';
+import { Card, Badge, Button, Dropdown } from 'react-bootstrap';
+import DataTable from '~shared/ui/datatable';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    });
+function Points_UserHistory(){
+    const params = useParams();
 
-    return response.data;
-}
-
-function Points_History() {
+    const [userInfo, setUserInfo] = useState({});
     const [tableData, setTableData] = useState([]);
     const [columns, setColumns] = useState([]);
 
     const dataRef = useRef();
-
-    const [dataLoading, setDataLoading] = useState(false);
 
     const [optionList, setOptionList] = useState([
         { data: '상점', view: true },
@@ -39,31 +30,47 @@ function Points_History() {
         init();
     }, []);
 
-    async function init(allData = false) {
-        const data = await getData('/api/points/history', { allData });
+    async function init() {
+        const { userID } = params;
+        const userInfoData = await getData('/api/user_history', { userID });
+        if (userInfoData['msg']) return;
 
-        dataRef.current = data;
-        setupTable(data);
+        const { name, stuid, plus, minus, history } = userInfoData;
+        const etc = 0;
+        setUserInfo({ name, stuid, plus, minus, etc, points: plus - minus });
+
+        dataRef.current = userInfoData;
+
+        setupTable(userInfoData);
     }
 
     function setupTable(data) {
         if (!data) return;
 
-        const dataList = data.map((x, idx) => {
-            const { id, date, act_date, teacher, user, reason_caption, beforeplus, beforeminus, afterplus, afterminus } = x;
+        const { name, stuid, history } = data;
+
+        if (!history) return;
+
+        const userHistory = history.map((x, idx) => {
+            const {
+                id,
+                date,
+                act_date,
+                teacher,
+                reason_caption,
+                beforeplus,
+                beforeminus,
+                afterplus,
+                afterminus,
+            } = x;
             const delta = afterplus - beforeplus - (afterminus - beforeminus);
 
             return [
-                <Form.Check type="checkbox">
-                    <Form.Check.Input type="checkbox" isValid />
-                </Form.Check>,
+                '',
                 id,
                 moment(date).format('YYYY-MM-DD'),
                 teacher.name,
-                <a href={`/points/user_history/${user.id}`}>
-                    {user ? user.name : ''} ({user ? user.stuid : ''})
-                </a>,
-                user.name,
+                `${name} (${stuid})`,
                 <>
                     <span className={`type ${delta < 0 ? 'bad' : 'good'}`}>
                         {delta < 0 ? '벌점' : '상점'}
@@ -71,38 +78,23 @@ function Points_History() {
                     <span className="score">{Math.abs(delta)}점</span>
                 </>,
                 delta,
-                reason_caption.length > 30
-                    ? reason_caption.substring(0, 30) + '...'
+                reason_caption.length > 40
+                    ? reason_caption.substring(0, 40) + '...'
                     : reason_caption,
                 moment(act_date).format('YYYY-MM-DD'),
-                <>
-                    <Button
-                        className="rowButton"
-                        variant="primary"
-                        size="sm"
-                        onClick={removeHandler}
-                    >
-                        수정
-                    </Button>
-                    <Button
-                        className="rowButton"
-                        variant="danger"
-                        size="sm"
-                        onClick={removeHandler}
-                    >
-                        삭제
-                    </Button>
-                </>,
+                <Button variant="danger" size="sm">
+                    이의 제기
+                </Button>,
             ];
         });
 
+        setTableData(userHistory);
         setColumns([
             { data: '선택', orderable: false },
             { data: 'ID', className: 'dt-id' },
             { data: '기준일자' },
             { data: '권한자' },
-            { data: '성명 (학번)', className: 'dt-link', searchBase: 5 },
-            { hidden: true },
+            { data: '성명 (학번)', className: 'dt-link' },
             {
                 className: 'dt-content',
                 data: (
@@ -129,14 +121,13 @@ function Points_History() {
                         </Dropdown.Menu>
                     </Dropdown>
                 ),
-                orderBase: 7,
+                orderBase: 6,
             },
             { hidden: true },
             { data: '사유', className: 'dt-reason' },
             { data: '반영일시' },
             { data: '#', orderable: false },
         ]);
-        setTableData(dataList);
     }
 
     function optionHandler(e) {
@@ -149,7 +140,9 @@ function Points_History() {
         const arr = [...list];
         arr[idx].view = !arr[idx].view;
 
-        const finalData = dataRef.current.filter((data) => {
+        const { history } = dataRef.current;
+
+        const finalData = history.filter((data) => {
             const { beforeplus, beforeminus, afterplus, afterminus } = data;
             const delta = afterplus - beforeplus - (afterminus - beforeminus);
 
@@ -159,47 +152,37 @@ function Points_History() {
         });
 
         setOptionList(arr);
-        setupTable(finalData);
-    }
-
-    async function refreshData() {
-        if (dataLoading) return;
-
-        setDataLoading(true);
-        await init();
-        setDataLoading(false);
-    }
-
-    async function allData() {
-        if (dataLoading) return;
-
-        setDataLoading(true);
-        await init(true);
-        setDataLoading(false);
-    }
-
-    function removeHandler() {
-        MySwal.fire({
-            title: '정말 회수 하시겠습니까?',
-            icon: 'question',
-            confirmButtonText: '확인',
-            showCancelButton: true,
-            cancelButtonText: '취소',
+        setupTable({
+            ...dataRef.current,
+            history: finalData,
         });
     }
 
     return (
         <>
-            <div id="points_history">
+            <div id="points_userHistory">
                 <Card>
                     <Card.Header>
-                        <Card.Title>상벌점 기록</Card.Title>
+                        <Card.Title>내 상벌점</Card.Title>
                     </Card.Header>
                     <Card.Body>
+                        <br />
+                        <h1 className="label myPoint">
+                            <span className="sum">{userInfo.points}점</span>
+                            <Badge className="plus">
+                                상점: +{userInfo.plus}
+                            </Badge>
+                            <Badge className="minus">
+                                벌점: -{userInfo.minus}
+                            </Badge>
+                            <Badge className="etc">기타: {userInfo.etc}</Badge>
+                        </h1>
+
                         <div className="tableWrap">
+                            <br />
                             <Card.Text className="label">상벌점 기록</Card.Text>
                             <DataTable
-                                className="historyTable"
+                                className="myPointsViewTable"
                                 columns={columns}
                                 data={tableData}
                                 order={[1, 'desc']}
@@ -207,24 +190,6 @@ function Points_History() {
                                     language: {
                                         search: '통합 검색: ',
                                     },
-                                    button: [
-                                        <Button
-                                            className="tableButton"
-                                            onClick={refreshData}
-                                            disabled={dataLoading}
-                                            variant="primary"
-                                        >
-                                            새로고침
-                                        </Button>,
-                                        <Button
-                                            className="tableButton"
-                                            onClick={allData}
-                                            disabled={dataLoading}
-                                            variant="primary"
-                                        >
-                                            전체 기록 조회
-                                        </Button>,
-                                    ],
                                 }}
                             />
                         </div>
@@ -235,4 +200,4 @@ function Points_History() {
     );
 }
 
-export default Points_History;
+export default Points_UserHistory;
