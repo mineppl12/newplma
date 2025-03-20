@@ -8,7 +8,7 @@ import {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
-library.add(fas);
+library.add(fas)
 
 // ###
 
@@ -95,7 +95,7 @@ function Layout() {
                 </div>
             </div>
         </>
-    );
+    )
 }
 
 const routesWithPermissions = [
@@ -137,7 +137,7 @@ const browserRouter = createBrowserRouter([
         element: <Layout />,
         children: [...filteredRoutes, { path: '*', element: <Page404 /> }],
     },
-]);
+])
 
 export default function AppRouter() {
     return <RouterProvider router={browserRouter} />;

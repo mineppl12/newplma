@@ -30,7 +30,7 @@ export const pathKeys = {
             return {
                 link: pathKeys.points.root().concat('apply/'),
                 permission: 'viewPointsApply',
-            };
+            }
         },
         history() {
             return {

@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios from 'axios';
 
-async function getData(url, params = {}){
-    const response = await axios.get(`${url}`, {
-        params: params
-    });
+async function getData(url, params = {}) {
+  const response = await axios.get(url, {
+    params,
+  });
 
-    return response.data;
+  return response.data;
 }
 
 export default getData;
