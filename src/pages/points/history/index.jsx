@@ -35,7 +35,6 @@ function Points_History() {
 
     async function init(allData = false) {
         const data = await getData('/api/points/history', { allData });
-        console.log(data);
 
         dataRef.current = data;
         setupTable(data);
