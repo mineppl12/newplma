@@ -4,7 +4,7 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr()],
+  plugins: [react()],
   server: {
     proxy: {
       '/api': {
@@ -25,10 +25,6 @@ export default defineConfig({
       {
         find: '~shared',
         replacement: path.resolve(__dirname, 'src/shared'),
-      },
-      {
-        find: '@components',
-        replacement: path.resolve(__dirname, 'src/components'),
       },
     ],
   },
