@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 
 import moment from 'moment';
-import getData from '~shared/scripts/getData.js';
+import { getData } from '~shared/scripts/getData.js';
 
 import './index.scss';
 
@@ -11,7 +11,7 @@ import DataTable from '~shared/ui/datatable';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
-function Points_UserHistory(){
+function Points_UserHistory() {
     const params = useParams();
 
     const [userInfo, setUserInfo] = useState({});

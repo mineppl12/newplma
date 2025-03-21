@@ -1,31 +1,31 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import './index.scss'
+import './index.scss';
 
-import axios from 'axios'
-import moment from 'moment'
+import axios from 'axios';
+import moment from 'moment';
 
-import DataTable from '~shared/ui/datatable'
-import { Card, Button } from 'react-bootstrap'
+import DataTable from '~shared/ui/datatable';
+import { Card, Button } from 'react-bootstrap';
 
-const TITLE = import.meta.env.VITE_TITLE
+const TITLE = import.meta.env.VITE_TITLE;
 
 async function getData(url, params = {}) {
     const response = await axios.get(`${url}`, {
         params: params,
-    })
+    });
 
-    return response.data
+    return response.data;
 }
 
 function Case_History() {
-    const [columns, setColumns] = useState([])
-    const [tableData, setTableData] = useState([])
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     async function init() {
         let dataList = await getData('/api/remote/case/history');
@@ -33,7 +33,7 @@ function Case_History() {
         console.log(dataList);
 
         dataList = dataList.map((x, idx) => {
-            const { id, status, name, updatedAt, updatedBy } = x
+            const { id, status, name, updatedAt, updatedBy } = x;
 
             return [
                 id,
@@ -58,17 +58,17 @@ function Case_History() {
                     </Button>
                 </>,
                 `${moment(updatedAt).format('YYYY-MM-DD HH:MM:SS')} (${updatedBy})`,
-            ]
-        })
+            ];
+        });
 
-        setTableData(dataList)
+        setTableData(dataList);
         setColumns([
             { data: 'ID', orderable: false },
             { data: '디바이스명', orderable: false },
             { data: '잠금상태', orderable: false },
             { data: '조작 / 통신', orderable: false },
             { data: '마지막 기록', orderable: false },
-        ])
+        ]);
     }
 
     return (
@@ -91,7 +91,7 @@ function Case_History() {
                 </Card>
             </div>
         </>
-    )
+    );
 }
 
-export default Case_History
+export default Case_History;
