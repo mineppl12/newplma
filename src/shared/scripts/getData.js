@@ -11,4 +11,4 @@ async function getData(url, params = {}) {
   return response.data;
 }
 
-export default getData;
+export { getData };

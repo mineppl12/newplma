@@ -9,17 +9,11 @@ import MySwal from '~shared/ui/sweetalert';
 
 import './index.scss';
 
+import { getData } from '~shared/scripts/getData';
+
 import { Card, Button, Dropdown, Form } from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
-
-async function getData(url, params = {}) {
-  const response = await axios.get(`${url}`, {
-    params: params,
-  });
-
-  return response.data;
-}
 
 function Points_History() {
   const [tableData, setTableData] = useState([]);
