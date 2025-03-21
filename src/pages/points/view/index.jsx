@@ -19,7 +19,7 @@ function Points_View() {
   async function init() {
     let testList = [];
     const data = await getData('https://points.jshsus.kr/api2/points');
-    console.log(data);
+
     testList = data.map((x, idx) => {
       const { id, stuid, grade, num, name, plus, minus } = x;
       const className = x.class;
