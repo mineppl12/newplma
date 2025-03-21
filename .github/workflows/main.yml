@@ -26,6 +26,6 @@ jobs:
           SERVER_IP: ${{ secrets.SSH_HOST }}
           APP_DIR: ${{ secrets.WORK_DIR }}
         run: 
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 $SERVER_USER@$SERVER_IP  "
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 "$SERVER_USER@$SERVER_IP" "cd \"$APP_DIR\"; ./build.sh"
           cd $APP_DIR;
           ./build.sh;
