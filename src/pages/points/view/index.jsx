@@ -1,12 +1,12 @@
-import { useLocation, useNavigate, NavLink } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useLocation, useNavigate, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-import './index.scss';
+import "./index.scss";
 
-import { Card, Button } from 'react-bootstrap';
-import DataTable from '~shared/ui/datatable';
+import { Card, Button } from "react-bootstrap";
+import DataTable from "~shared/ui/datatable";
 
-import getData from '~shared/scripts/getData';
+import getData from "~shared/scripts/getData";
 
 function Points_View() {
   const [tableData, setTableData] = useState([]);
@@ -18,7 +18,8 @@ function Points_View() {
 
   async function init() {
     let testList = [];
-    const data = await getData('/api/points');
+    const data = await getData("/api/points");
+    console.log(data);
     testList = data.map((x, idx) => {
       const { id, stuid, grade, num, name, plus, minus } = x;
       const className = x.class;
@@ -44,17 +45,17 @@ function Points_View() {
 
     setTableData(testList);
     setColumns([
-      { data: '학번', className: 'dt-link', orderBase: 1 },
+      { data: "학번", className: "dt-link", orderBase: 1 },
       { hidden: true },
-      { data: '학년' },
-      { data: '반' },
-      { data: '번호' },
-      { data: '성명', className: 'dt-name dt-link', orderBase: 6 },
+      { data: "학년" },
+      { data: "반" },
+      { data: "번호" },
+      { data: "성명", className: "dt-name dt-link", orderBase: 6 },
       { hidden: true },
-      { data: '누계 상점' },
-      { data: '누계 벌점' },
-      { data: '기타' },
-      { data: '합계', className: 'dt-sum' },
+      { data: "누계 상점" },
+      { data: "누계 벌점" },
+      { data: "기타" },
+      { data: "합계", className: "dt-sum" },
     ]);
   }
 
@@ -78,7 +79,7 @@ function Points_View() {
                 data={tableData}
                 options={{
                   language: {
-                    search: '통합 검색: ',
+                    search: "통합 검색: ",
                   },
                 }}
               />
