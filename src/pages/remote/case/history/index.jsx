@@ -30,8 +30,6 @@ function Case_History() {
     async function init() {
         let dataList = await getData('/api/remote/case/history');
 
-        console.log(dataList);
-
         dataList = dataList.map((x, idx) => {
             const { id, status, name, updatedAt, updatedBy } = x;
 
