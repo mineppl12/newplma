@@ -30,6 +30,14 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
+    const [inputs, setInputs] = useState({
+        pointType: 'good',
+        point: 0,
+        reason: '',
+        date: '',
+        reasonCaption: '',
+    });
+
     useEffect(() => {
         init();
     }, []);
@@ -174,8 +182,12 @@ function Points_History() {
         const reasonId = e.target.value;
         const reasons = reasonsRef.current;
         const reason = reasons.find((x) => x.id == reasonId);
-        const reasonCaption = reason ? reason.title : '';
-        document.getElementById('reasonCaption').value = reasonCaption;
+
+        setInputs((prevState) => ({
+            ...prevState,
+            reason: reasonId,
+            reasonCaption: reason.title,
+        }));
     }
 
     async function refreshData() {
@@ -215,6 +227,15 @@ function Points_History() {
         });
     }
 
+    const handleChange = (e) => {
+        const { name, value } = e.target; // name 속성 가져오기
+
+        setInputs((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
     function handleClickEdit(x) {
         const {
             id,
@@ -230,15 +251,26 @@ function Points_History() {
             afterminus,
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
+        setInputs({
+            pointType: delta < 0 ? 'bad' : 'good',
+            point: Math.abs(delta),
+            reason,
+            date: act_date,
+            reasonCaption: reason_caption,
+        });
+        console.log('수정할 데이터:', x);
+        console.log(inputs);
 
         const modalContent = (
             <Form id="editForm" className="p-3">
                 <Row className="mb-3">
                     <Col md={6}>
-                        <Form.Group controlId="type">
+                        <Form.Group controlId="pointType">
                             <Form.Label>상벌점 유형</Form.Label>
                             <Form.Select
-                                defaultValue={delta < 0 ? 'bad' : 'good'}
+                                value={inputs.pointType}
+                                name="pointType"
+                                onChange={handleChange}
                             >
                                 <option value="good">상점</option>
                                 <option value="bad">벌점</option>
@@ -252,7 +284,9 @@ function Points_History() {
                                 type="number"
                                 placeholder="점수를 입력하세요"
                                 min="0"
-                                defaultValue={Math.abs(delta)}
+                                value={inputs.point}
+                                name="point"
+                                onChange={handleChange}
                             />
                         </Form.Group>
                     </Col>
@@ -262,11 +296,12 @@ function Points_History() {
                         <Form.Group controlId="reason">
                             <Form.Label>기준 규정</Form.Label>
                             <Form.Select
-                                defaultValue={reason}
+                                value={inputs.reason}
                                 onChange={handleSelectReason}
+                                name="reason"
                             >
                                 {reasonsRef.current.map((item) => (
-                                    <option key={item.title} value={item.id}>
+                                    <option key={item.id} value={item.id}>
                                         {item.title}
                                     </option>
                                 ))}
@@ -274,9 +309,14 @@ function Points_History() {
                         </Form.Group>
                     </Col>
                     <Col md={6}>
-                        <Form.Group controlId="date">
+                        <Form.Group controlId="act_date">
                             <Form.Label>기준일자</Form.Label>
-                            <Form.Control type="date" defaultValue={act_date} />
+                            <Form.Control
+                                type="date"
+                                value={inputs.date}
+                                name="act_date"
+                                onChange={handleChange}
+                            />
                         </Form.Group>
                     </Col>
                 </Row>
@@ -286,7 +326,9 @@ function Points_History() {
                         as="textarea"
                         rows={2}
                         placeholder="사유를 입력하세요"
-                        defaultValue={reason_caption}
+                        value={inputs.reasonCaption}
+                        onChange={handleChange}
+                        name="reasonCaption"
                     />
                 </Form.Group>
             </Form>
@@ -299,12 +341,13 @@ function Points_History() {
             confirmButtonText: '확인',
             cancelButtonText: '취소',
             preConfirm: () => {
-                const type = document.getElementById('type').value;
-                const point = document.getElementById('point').value;
-                const reason = document.getElementById('reason').value;
-                const date = document.getElementById('date').value;
-                const reasonCaption =
-                    document.getElementById('reasonCaption').value;
+                const {
+                    pointType: type,
+                    point,
+                    reason,
+                    date,
+                    reasonCaption,
+                } = inputs;
 
                 if (!type || !point || !reason || !date || !reasonCaption) {
                     MySwal.showValidationMessage('모든 필드를 입력해주세요.');
