@@ -29,7 +29,6 @@ function Case_History() {
 
     async function init() {
         let dataList = await getData('/api/remote/case/history');
-        console.log(dataList);
 
         dataList = dataList.map((x, idx) => {
             const { id, operatedBy, affected, statusTo, operatedAt } = x;
@@ -37,8 +36,10 @@ function Case_History() {
             return [
                 id,
                 operatedBy.name,
-                affected,
-                statusTo,
+                affected.name ?? (affected.all == true ? '전체' : '오류'),
+                <span className={`type ${statusTo == 0 ? 'close' : 'open'}`}>
+                    {statusTo == 0 ? '잠금' : '해제'}
+                </span>,
                 moment(operatedAt).format('YYYY-MM-DD HH:MM:SS'),
             ];
         });
@@ -48,7 +49,7 @@ function Case_History() {
             { data: 'ID' },
             { data: '권한자' },
             { data: '디바이스명' },
-            { data: '조작' },
+            { data: '조작', className: 'dt-content' },
             { data: '날짜', orderable: false },
         ]);
     }
@@ -64,7 +65,7 @@ function Case_History() {
                         <Card.Text className="label">보관함 기록</Card.Text>
                         <div className="tableWrap">
                             <DataTable
-                                className="remoteCaseHistory"
+                                className="remoteCaseHistoryTable"
                                 columns={columns}
                                 data={tableData}
                                 order={[0, 'desc']}
