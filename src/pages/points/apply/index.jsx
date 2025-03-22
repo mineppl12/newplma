@@ -28,17 +28,25 @@ function Points_Apply() {
         grade: 1,
         classNum: 1,
         studentNum: 1,
-        name: '',
         reason: 1,
+        reasonCaption: '상점봉사활동신청서1',
         plusPoints: 0,
         minusPoints: 0,
         act_date: new Date().toISOString().split('T')[0], // 오늘 날짜로 초기화
     });
 
-    const reasonCaption =
-        reasons.length > 0
-            ? reasons.find((reason) => reason.id === inputs.reason).title
-            : '';
+    const name =
+        users.find(
+            (user) =>
+                user.grade === inputs.grade &&
+                user.class === inputs.classNum &&
+                user.num === inputs.studentNum
+        )?.name || '';
+
+    // const reasonCaption =
+    //     reasons.length > 0
+    //         ? reasons.find((reason) => reason.id === inputs.reason).title
+    //         : '';
 
     const handleSearch = (e) => {
         if (e.target.name == 'user') setUserSearchKeyword(e.target.value);
@@ -73,7 +81,6 @@ function Points_Apply() {
                 grade,
                 classNum,
                 studentNum,
-                name,
                 plusPoints,
                 minusPoints,
                 totalPoints,
@@ -86,6 +93,7 @@ function Points_Apply() {
                 classNum,
                 num: studentNum,
                 reason,
+                reasonCaption,
                 plusPoints: parseInt(plusPoints),
                 minusPoints: parseInt(minusPoints),
             };
@@ -134,12 +142,12 @@ function Points_Apply() {
             inputs.grade,
             inputs.classNum,
             inputs.studentNum,
-            `${inputs.name} (${inputs.grade}${inputs.classNum}${inputs.studentNum.toString().padStart(2, '0')})`,
+            `${name} (${inputs.grade}${inputs.classNum}${inputs.studentNum.toString().padStart(2, '0')})`,
             inputs.plusPoints,
             inputs.minusPoints,
             updatedTotalPoints,
             inputs.reason,
-            reasonCaption,
+            inputs.reasonCaption,
         ];
 
         const newTableData = [...tableData, newEntry];
@@ -170,6 +178,7 @@ function Points_Apply() {
         setInputs((prev) => ({
             ...prev,
             reason: parseInt(value),
+            reasonCaption: reasons.find((reason) => reason.id == value).title,
             plusPoints: reasons.find((reason) => reason.id == value).plus,
             minusPoints: reasons.find((reason) => reason.id == value).minus,
         }));
@@ -188,17 +197,6 @@ function Points_Apply() {
         const reasons = await getData('/api/reason');
         setUsers(users);
         setReasons(reasons);
-
-        setInputs((prev) => ({
-            ...prev,
-            name:
-                users.find(
-                    (user) =>
-                        user.grade === prev.grade &&
-                        user.class === prev.classNum &&
-                        user.num === prev.studentNum
-                )?.name || '',
-        }));
 
         setTableData([]);
         setColumns([
@@ -232,7 +230,7 @@ function Points_Apply() {
                                     variant=""
                                     className="border w-100 text-start"
                                 >
-                                    {inputs.name} ({inputs.grade}
+                                    {name} ({inputs.grade}
                                     {inputs.classNum}
                                     {inputs.studentNum
                                         .toString()
@@ -349,7 +347,10 @@ function Points_Apply() {
                                             variant=""
                                             className="flex-grow-1 text-start border"
                                         >
-                                            {reasonCaption || '사유 선택'}
+                                            {reasons.find(
+                                                (reason) =>
+                                                    reason.id === inputs.reason
+                                            )?.title || '사유 선택'}
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu
@@ -452,7 +453,7 @@ function Points_Apply() {
                                     <Form.Control
                                         type="text"
                                         name="reasonCaption"
-                                        value={reasonCaption}
+                                        value={inputs.reasonCaption}
                                         onChange={handleChange}
                                         placeholder=""
                                     />
