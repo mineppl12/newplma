@@ -1,55 +1,49 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 
-import axios from 'axios'
+import axios from 'axios';
 
-import MySwal from '~shared/ui/sweetalert'
+import MySwal from '~shared/ui/sweetalert';
 
-import { Card, Button, Dropdown } from 'react-bootstrap'
-import DataTable from '~shared/ui/datatable'
+import { getData } from '~shared/scripts/getData.js';
 
-import './index.scss'
+import { Card, Button, Dropdown } from 'react-bootstrap';
+import DataTable from '~shared/ui/datatable';
 
-const TITLE = import.meta.env.VITE_TITLE
+import './index.scss';
 
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    })
-
-    return response.data
-}
+const TITLE = import.meta.env.VITE_TITLE;
 
 function Points_Reason() {
-    const [columns, setColumns] = useState([])
-    const [tableData, setTableData] = useState([])
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
-    const dataRef = useRef()
+    const dataRef = useRef();
 
     const [optionList, setOptionList] = useState([
         { data: '상점', view: true },
         { data: '벌점', view: true },
         { data: '기타', view: true },
-    ])
+    ]);
 
     useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     async function init() {
-        const data = await getData('/api/points/reason')
+        const data = await getData('/api/points/reason');
 
-        dataRef.current = data
+        dataRef.current = data;
 
-        setupTable(data)
+        setupTable(data);
     }
 
     function setupTable(data) {
-        if (!data) return
+        if (!data) return;
 
         const reasonList = data.map((x, idx) => {
-            const { id, title, plus, minus } = x
-            const delta = plus - minus
+            const { id, title, plus, minus } = x;
+            const delta = plus - minus;
 
             return [
                 id,
@@ -69,8 +63,8 @@ function Points_Reason() {
                         삭제
                     </Button>
                 </>,
-            ]
-        })
+            ];
+        });
 
         setColumns([
             { data: '번호' },
@@ -105,32 +99,32 @@ function Points_Reason() {
             },
             { hidden: true },
             { data: '#', className: 'dt-button' },
-        ])
+        ]);
 
-        setTableData(reasonList)
+        setTableData(reasonList);
     }
 
     function optionHandler(e) {
-        e.stopPropagation()
+        e.stopPropagation();
     }
 
     function optionSelect(e, idx, list) {
-        e = e || window.event
+        e = e || window.event;
 
-        const arr = [...list]
-        arr[idx].view = !arr[idx].view
+        const arr = [...list];
+        arr[idx].view = !arr[idx].view;
 
         const finalData = dataRef.current.filter((data) => {
-            const { plus, minus } = data
-            const delta = plus - minus
+            const { plus, minus } = data;
+            const delta = plus - minus;
 
-            const type = delta < 0 ? 1 : 0
+            const type = delta < 0 ? 1 : 0;
 
-            return arr[type].view
-        })
+            return arr[type].view;
+        });
 
-        setOptionList(arr)
-        setupTable(finalData)
+        setOptionList(arr);
+        setupTable(finalData);
     }
 
     return (
@@ -161,7 +155,7 @@ function Points_Reason() {
                 </Card>
             </div>
         </>
-    )
+    );
 }
 
-export default Points_Reason
+export default Points_Reason;
