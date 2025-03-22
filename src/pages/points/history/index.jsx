@@ -186,7 +186,7 @@ function Points_History() {
         setInputs((prevState) => ({
             ...prevState,
             reason: reasonId,
-            reasonCaption: reason.title,
+            reasonCaption: reason,
         }));
     }
 
@@ -254,12 +254,12 @@ function Points_History() {
         setInputs({
             pointType: delta < 0 ? 'bad' : 'good',
             point: Math.abs(delta),
-            reason,
+            reason: reason - 1,
             date: act_date,
             reasonCaption: reason_caption,
         });
-        console.log('수정할 데이터:', x);
-        console.log(inputs);
+
+        console.log(x);
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -296,15 +296,17 @@ function Points_History() {
                         <Form.Group controlId="reason">
                             <Form.Label>기준 규정</Form.Label>
                             <Form.Select
-                                defaultValue={inputs.reason}
+                                defaultValue={reason}
                                 onChange={handleSelectReason}
                                 name="reason"
                             >
-                                {reasonsRef.current.map((item) => (
-                                    <option key={item.id} value={item.id}>
-                                        {item.title}
-                                    </option>
-                                ))}
+                                {reasonsRef.current.map((item) => {
+                                    return (
+                                        <option key={item.id} value={item.id}>
+                                            {item.title}
+                                        </option>
+                                    );
+                                })}
                             </Form.Select>
                         </Form.Group>
                     </Col>
@@ -313,7 +315,9 @@ function Points_History() {
                             <Form.Label>기준일자</Form.Label>
                             <Form.Control
                                 type="date"
-                                defaultValue={inputs.date}
+                                defaultValue={moment(act_date).format(
+                                    'YYYY-MM-DD'
+                                )}
                                 name="act_date"
                                 onChange={handleChange}
                             />
@@ -326,7 +330,7 @@ function Points_History() {
                         as="textarea"
                         rows={2}
                         placeholder="사유를 입력하세요"
-                        defaultValue={inputs.reasonCaption}
+                        defaultValue={reason_caption}
                         onChange={handleChange}
                         name="reasonCaption"
                     />
@@ -360,13 +364,6 @@ function Points_History() {
             if (result.isConfirmed) {
                 const { type, reason, reasonCaption, point, date } =
                     result.value;
-                console.log('수정된 데이터:', {
-                    type,
-                    reason,
-                    reasonCaption,
-                    point,
-                    date,
-                });
                 // 여기에 수정된 데이터를 서버로 전송하는 로직 추가
             }
         });
