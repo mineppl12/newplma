@@ -93,16 +93,9 @@ function Points_Apply() {
 
         console.log(entries);
         // API 호출
-        fetch('https://points.jshsus.kr/api2/points', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(entries),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
+        postData('/api/points', entries)
+            .then((response) => {
+                console.log(response.data);
                 alert('상벌점이 성공적으로 부여되었습니다.');
                 init();
             })
@@ -177,6 +170,8 @@ function Points_Apply() {
         setInputs((prev) => ({
             ...prev,
             reason: parseInt(value),
+            plusPoints: reasons.find((reason) => reason.id == value).plus,
+            minusPoints: reasons.find((reason) => reason.id == value).minus,
         }));
     };
 
@@ -193,6 +188,7 @@ function Points_Apply() {
         const reasons = await getData('/api/reason');
         setUsers(users);
         setReasons(reasons);
+
         setInputs((prev) => ({
             ...prev,
             name:
