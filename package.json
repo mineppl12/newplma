@@ -5,10 +5,10 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "VITE_NODE_ENV=production vite build",
+        "build": "vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "serve": "VITE_NODE_ENV=production vite preview --port 3010"
+        "serve": "vite preview --port 3010"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.7.2",

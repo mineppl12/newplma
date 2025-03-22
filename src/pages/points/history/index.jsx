@@ -35,6 +35,7 @@ function Points_History() {
 
     async function init(allData = false) {
         const data = await getData('/api/points/history', { allData });
+        console.log(import.meta.env.MODE, import.meta.env.VITE_NODE_ENV);
 
         dataRef.current = data;
         setupTable(data);
