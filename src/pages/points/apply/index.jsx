@@ -25,9 +25,9 @@ function Points_Apply() {
     const [userSearchKeyword, setUserSearchKeyword] = useState('');
     const [reasonSearchKeyword, setReasonSearchKeyword] = useState('');
     const [inputs, setInputs] = useState({
-        grade: 1,
-        classNum: 1,
-        studentNum: 1,
+        grade: 9,
+        classNum: 9,
+        studentNum: 81,
         reason: 1,
         reasonCaption: '상점봉사활동신청서1',
         plusPoints: 0,
