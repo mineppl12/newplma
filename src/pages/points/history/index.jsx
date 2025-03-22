@@ -11,7 +11,7 @@ import './index.scss';
 
 import { getData } from '~shared/scripts/getData';
 
-import { Card, Button, Dropdown, Form } from 'react-bootstrap';
+import { Card, Button, Dropdown, Form, Row, Col } from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
@@ -29,12 +29,22 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
+    const [reasons, setReasons] = useState([]);
+
     useEffect(() => {
         init();
     }, []);
 
+    useEffect(() => {
+        console.log('aaaaaaa');
+        console.log(reasons);
+    }, [reasons]);
+
     async function init(allData = false) {
         const data = await getData('/api/points/history', { allData });
+        const reasonData = await getData('/api/reason');
+        setReasons(reasonData);
+        console.log(reasonData);
         console.log(import.meta.env.MODE, import.meta.env.VITE_NODE_ENV);
 
         dataRef.current = data;
@@ -86,7 +96,7 @@ function Points_History() {
                         className="rowButton"
                         variant="primary"
                         size="sm"
-                        onClick={removeHandler}
+                        onClick={() => handleClickEdit(x)}
                     >
                         수정
                     </Button>
@@ -94,7 +104,7 @@ function Points_History() {
                         className="rowButton"
                         variant="danger"
                         size="sm"
-                        onClick={removeHandler}
+                        onClick={() => handleClickDelete(x)}
                     >
                         삭제
                     </Button>
@@ -168,6 +178,13 @@ function Points_History() {
         setupTable(finalData);
     }
 
+    function handleSelectReason(e) {
+        const reasonId = e.target.value;
+        const reason = reasons.find((x) => x.id == reasonId);
+        const reasonCaption = reason ? reason.title : '';
+        document.getElementById('reasonCaption').value = reasonCaption;
+    }
+
     async function refreshData() {
         if (dataLoading) return;
 
@@ -184,13 +201,139 @@ function Points_History() {
         setDataLoading(false);
     }
 
-    function removeHandler() {
+    function handleClickDelete(x) {
         MySwal.fire({
-            title: '정말 회수 하시겠습니까?',
+            title: '정말 삭제하시겠습니까?',
             icon: 'question',
             confirmButtonText: '확인',
             showCancelButton: true,
             cancelButtonText: '취소',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/api/points/history/${x.id}`).then((res) => {
+                    if (res.ok) {
+                        MySwal.fire('삭제되었습니다.', '', 'success');
+                        refreshData();
+                    } else {
+                        MySwal.fire('삭제에 실패했습니다.', '', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function handleClickEdit(x) {
+        const {
+            id,
+            date,
+            act_date,
+            teacher,
+            user,
+            reason,
+            reason_caption,
+            beforeplus,
+            beforeminus,
+            afterplus,
+            afterminus,
+        } = x;
+        const delta = afterplus - beforeplus - (afterminus - beforeminus);
+        console.log(reasons);
+
+        const modalContent = (
+            <Form id="editForm" className="p-3">
+                <Row className="mb-3">
+                    <Col md={6}>
+                        <Form.Group controlId="type">
+                            <Form.Label>상벌점 유형</Form.Label>
+                            <Form.Select
+                                defaultValue={delta < 0 ? 'bad' : 'good'}
+                            >
+                                <option value="good">상점</option>
+                                <option value="bad">벌점</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group controlId="point">
+                            <Form.Label>점수</Form.Label>
+                            <Form.Control
+                                type="number"
+                                placeholder="점수를 입력하세요"
+                                min="0"
+                                defaultValue={Math.abs(delta)}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row className="mb-3">
+                    <Col md={6}>
+                        <Form.Group controlId="reason">
+                            <Form.Label>기준 규정</Form.Label>
+                            <Form.Select
+                                defaultValue={reason}
+                                onChange={handleSelectReason}
+                            >
+                                {reasons.map((item) => (
+                                    <option key={item.title} value={item.id}>
+                                        {item.title}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group controlId="date">
+                            <Form.Label>기준일자</Form.Label>
+                            <Form.Control type="date" defaultValue={act_date} />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Form.Group controlId="reasonCaption" className="mb-3">
+                    <Form.Label>사유</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={2}
+                        placeholder="사유를 입력하세요"
+                        defaultValue={reason_caption}
+                    />
+                </Form.Group>
+            </Form>
+        );
+
+        MySwal.fire({
+            title: '상벌점 수정',
+            html: modalContent,
+            showCancelButton: true,
+            confirmButtonText: '확인',
+            cancelButtonText: '취소',
+            preConfirm: () => {
+                const type = document.getElementById('type').value;
+                const point = document.getElementById('point').value;
+                const reason = document.getElementById('reason').value;
+                const date = document.getElementById('date').value;
+                const reasonCaption =
+                    document.getElementById('reasonCaption').value;
+
+                if (!type || !point || !reason || !date || !reasonCaption) {
+                    MySwal.showValidationMessage('모든 필드를 입력해주세요.');
+                    return false;
+                }
+
+                return { type, point, reason, date, reasonCaption };
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { type, reason, reasonCaption, point, date } =
+                    result.value;
+                console.log('수정된 데이터:', {
+                    type,
+                    reason,
+                    reasonCaption,
+                    point,
+                    date,
+                });
+                // 여기에 수정된 데이터를 서버로 전송하는 로직 추가
+            }
         });
     }
 
