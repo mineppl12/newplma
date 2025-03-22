@@ -1,39 +1,33 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import axios from 'axios'
+import axios from 'axios';
 
-import DataTable from '~shared/ui/datatable'
-import { Card, Button } from 'react-bootstrap'
+import DataTable from '~shared/ui/datatable';
+import { Card, Button } from 'react-bootstrap';
 
-import './index.scss'
+import './index.scss';
 
-const TITLE = import.meta.env.VITE_TITLE
+const TITLE = import.meta.env.VITE_TITLE;
 
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    })
-
-    return response.data
-}
+import { getData } from '~shared/scripts/getData';
 
 function PLMA_Accounts() {
-    const [columns, setColumns] = useState([])
-    const [tableData, setTableData] = useState([])
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     async function init() {
-        let dataList = []
+        let dataList = [];
 
-        dataList = await getData('/api/points/view')
+        dataList = await getData('/api/points/view');
 
         dataList = dataList.map((x, idx) => {
-            const { id, stuid, grade, num, name } = x
-            const className = x.class
+            const { id, stuid, grade, num, name } = x;
+            const className = x.class;
 
             return [
                 id,
@@ -50,10 +44,10 @@ function PLMA_Accounts() {
                         삭제
                     </Button>
                 </>,
-            ]
-        })
+            ];
+        });
 
-        setTableData(dataList)
+        setTableData(dataList);
         setColumns([
             { data: 'ID' },
             { data: '학번' },
@@ -62,7 +56,7 @@ function PLMA_Accounts() {
             { data: '반' },
             { data: '번호' },
             { data: '#', orderable: false },
-        ])
+        ]);
     }
 
     return (
@@ -93,7 +87,7 @@ function PLMA_Accounts() {
                 </Card>
             </div>
         </>
-    )
+    );
 }
 
-export default PLMA_Accounts
+export default PLMA_Accounts;
