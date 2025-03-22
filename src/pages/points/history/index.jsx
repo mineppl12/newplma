@@ -268,7 +268,7 @@ function Points_History() {
                         <Form.Group controlId="pointType">
                             <Form.Label>상벌점 유형</Form.Label>
                             <Form.Select
-                                value={inputs.pointType}
+                                defaultValue={inputs.pointType}
                                 name="pointType"
                                 onChange={handleChange}
                             >
@@ -284,7 +284,7 @@ function Points_History() {
                                 type="number"
                                 placeholder="점수를 입력하세요"
                                 min="0"
-                                value={inputs.point}
+                                defaultValue={inputs.point}
                                 name="point"
                                 onChange={handleChange}
                             />
@@ -296,7 +296,7 @@ function Points_History() {
                         <Form.Group controlId="reason">
                             <Form.Label>기준 규정</Form.Label>
                             <Form.Select
-                                value={inputs.reason}
+                                defaultValue={inputs.reason}
                                 onChange={handleSelectReason}
                                 name="reason"
                             >
@@ -313,7 +313,7 @@ function Points_History() {
                             <Form.Label>기준일자</Form.Label>
                             <Form.Control
                                 type="date"
-                                value={inputs.date}
+                                defaultValue={inputs.date}
                                 name="act_date"
                                 onChange={handleChange}
                             />
@@ -326,7 +326,7 @@ function Points_History() {
                         as="textarea"
                         rows={2}
                         placeholder="사유를 입력하세요"
-                        value={inputs.reasonCaption}
+                        defaultValue={inputs.reasonCaption}
                         onChange={handleChange}
                         name="reasonCaption"
                     />
