@@ -314,7 +314,7 @@ function Points_History() {
                             <Form.Control
                                 type="date"
                                 value={inputs.date}
-                                name="act_date"
+                                name="date"
                                 onChange={handleChange}
                             />
                         </Form.Group>
