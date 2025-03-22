@@ -20,6 +20,7 @@ function Points_History() {
     const [columns, setColumns] = useState([]);
 
     const dataRef = useRef();
+    const reasonsRef = useRef([]);
 
     const [dataLoading, setDataLoading] = useState(false);
 
@@ -29,27 +30,17 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
-    const [reasons, setReasons] = useState([]);
-
     useEffect(() => {
         init();
     }, []);
-
-    useEffect(() => {
-        console.log('aaaaaaa');
-        console.log(reasons);
-    }, [reasons]);
 
     async function init(allData = false) {
         const data = await getData('/api/points/history', { allData });
         const reasonData = await getData('/api/reason');
 
-        console.log(reasonData);
-        console.log(import.meta.env.MODE, import.meta.env.VITE_NODE_ENV);
-
         dataRef.current = data;
+        reasonsRef.current = reasonData;
         setupTable(data);
-        setReasons(reasonData);
     }
 
     function setupTable(data) {
@@ -181,6 +172,7 @@ function Points_History() {
 
     function handleSelectReason(e) {
         const reasonId = e.target.value;
+        const reasons = reasonsRef.current;
         const reason = reasons.find((x) => x.id == reasonId);
         const reasonCaption = reason ? reason.title : '';
         document.getElementById('reasonCaption').value = reasonCaption;
@@ -238,7 +230,6 @@ function Points_History() {
             afterminus,
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
-        console.log(reasons);
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -274,7 +265,7 @@ function Points_History() {
                                 defaultValue={reason}
                                 onChange={handleSelectReason}
                             >
-                                {reasons.map((item) => (
+                                {reasonsRef.current.map((item) => (
                                     <option key={item.title} value={item.id}>
                                         {item.title}
                                     </option>

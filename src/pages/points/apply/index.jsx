@@ -347,10 +347,17 @@ function Points_Apply() {
                                             variant=""
                                             className="flex-grow-1 text-start border"
                                         >
-                                            {reasons.find(
-                                                (reason) =>
+                                            {reasons.find((reason) => {
+                                                console.log('b');
+                                                console.log(
+                                                    reason.id,
+                                                    inputs.reason
+                                                );
+
+                                                return (
                                                     reason.id === inputs.reason
-                                            )?.title || '사유 선택'}
+                                                );
+                                            })?.title || '사유 선택'}
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu

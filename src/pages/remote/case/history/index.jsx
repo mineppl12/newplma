@@ -29,60 +29,50 @@ function Case_History() {
 
     async function init() {
         let dataList = await getData('/api/remote/case/history');
+        console.log(dataList);
 
         dataList = dataList.map((x, idx) => {
-            const { id, status, name, updatedAt, updatedBy } = x;
+            const { id, operatedBy, affected, statusTo, operatedAt } = x;
 
             return [
                 id,
-                <span className="dt-name">{name}</span>,
-                <span className={`dt-status ${status ? 'open' : 'closed'}`}>
-                    {status ? '해제 중' : '잠김'}
-                </span>,
-                <>
-                    <Button
-                        className="rowButton operation"
-                        variant="success"
-                        size="sm"
-                    >
-                        해제
-                    </Button>
-                    <Button
-                        className="rowButton comm"
-                        variant="primary"
-                        size="sm"
-                    >
-                        통신
-                    </Button>
-                </>,
-                `${moment(updatedAt).format('YYYY-MM-DD HH:MM:SS')} (${updatedBy})`,
+                operatedBy.name,
+                affected,
+                statusTo,
+                moment(operatedAt).format('YYYY-MM-DD HH:MM:SS'),
             ];
         });
 
         setTableData(dataList);
         setColumns([
-            { data: 'ID', orderable: false },
-            { data: '디바이스명', orderable: false },
-            { data: '잠금상태', orderable: false },
-            { data: '조작 / 통신', orderable: false },
-            { data: '마지막 기록', orderable: false },
+            { data: 'ID' },
+            { data: '권한자' },
+            { data: '디바이스명' },
+            { data: '조작' },
+            { data: '날짜', orderable: false },
         ]);
     }
 
     return (
         <>
-            <div id="case_control">
+            <div id="case_history">
                 <Card>
                     <Card.Header>
-                        <Card.Title>보관함 조작</Card.Title>
+                        <Card.Title>보관함 기록</Card.Title>
                     </Card.Header>
                     <Card.Body>
-                        <Card.Text className="label">보관함 조작</Card.Text>
+                        <Card.Text className="label">보관함 기록</Card.Text>
                         <div className="tableWrap">
                             <DataTable
-                                className="remoteCaseControl"
+                                className="remoteCaseHistory"
                                 columns={columns}
                                 data={tableData}
+                                order={[0, 'desc']}
+                                options={{
+                                    language: {
+                                        search: '통합 검색:',
+                                    },
+                                }}
                             />
                         </div>
                     </Card.Body>
