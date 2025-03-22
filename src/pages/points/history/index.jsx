@@ -30,13 +30,17 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
-    const [inputs, setInputs] = useState({
-        pointType: 'good',
-        point: 0,
-        reason: '',
-        date: '',
-        reasonCaption: '',
+    const [inputs, setInputs] = useState(() => {
+        console.log('initialize');
+        return {
+            pointType: 'good',
+            point: 0,
+            reason: 1,
+            date: moment().format('YYYY-MM-DD'),
+            reasonCaption: '',
+        };
     });
+    console.log('render');
 
     useEffect(() => {
         init();
@@ -236,7 +240,7 @@ function Points_History() {
         }));
     };
 
-    function handleClickEdit(x) {
+    const handleClickEdit = (x) => {
         const {
             id,
             date,
@@ -251,15 +255,13 @@ function Points_History() {
             afterminus,
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
-        setInputs({
+        const input = {
             pointType: delta < 0 ? 'bad' : 'good',
             point: Math.abs(delta),
             reason: reason - 1,
             date: act_date,
             reasonCaption: reason_caption,
-        });
-
-        console.log(x);
+        };
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -312,7 +314,7 @@ function Points_History() {
                     </Col>
                     <Col md={6}>
                         <Form.Group controlId="act_date">
-                            <Form.Label>기준일자</Form.Label>
+                            <Form.Label>기준 일자</Form.Label>
                             <Form.Control
                                 type="date"
                                 defaultValue={moment(act_date).format(
@@ -367,7 +369,7 @@ function Points_History() {
                 // 여기에 수정된 데이터를 서버로 전송하는 로직 추가
             }
         });
-    }
+    };
 
     return (
         <>
