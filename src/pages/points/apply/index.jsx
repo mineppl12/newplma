@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
+import postData from '~shared/scripts/postData';
 import './index.scss';
 
 import {
@@ -81,23 +82,17 @@ function Points_Apply() {
       return {
         act_date,
         grade,
-        class: classNum,
-        number: studentNum,
+        classNum,
+        num: studentNum,
         reason,
-        plusPoints,
-        minusPoints,
+        plusPoints: parseInt(plusPoints),
+        minusPoints: parseInt(minusPoints),
       };
     });
 
     console.log(entries);
     // API 호출
-    fetch('https://points.jshsus.kr/api2/points', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(entries),
-    })
+    postData('/api/points', entries)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -191,7 +186,13 @@ function Points_Apply() {
     setReasons(reasons);
     setInputs((prev) => ({
       ...prev,
-      name: users[0].name,
+      name:
+        users.find(
+          (user) =>
+            user.grade === prev.grade &&
+            user.class === prev.classNum &&
+            user.num === prev.studentNum
+        )?.name || '',
     }));
 
     setTableData([]);

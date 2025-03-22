@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-async function postData(url, params = {}) {
-  const response = await axios.post(url, {
-    data: params,
-  });
-
+async function postData(url, body) {
+  const response = await axios.post(url, body);
   return response.data;
 }
 
