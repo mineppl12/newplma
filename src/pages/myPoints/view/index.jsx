@@ -1,53 +1,53 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 
-import moment from 'moment'
-import getData from '~shared/scripts/getData.js'
+import moment from 'moment';
+import { getData } from '~shared/scripts/getData.js';
 
-import './index.scss'
+import './index.scss';
 
-import { Card, Badge, Button, Dropdown } from 'react-bootstrap'
-import DataTable from '~shared/ui/datatable'
+import { Card, Badge, Button, Dropdown } from 'react-bootstrap';
+import DataTable from '~shared/ui/datatable';
 
-const TITLE = import.meta.env.VITE_TITLE
-const userID = 32001 // 32067
+const TITLE = import.meta.env.VITE_TITLE;
+const userID = 32001; // 32067
 
 function MyPoints_View() {
-    const [userInfo, setUserInfo] = useState({})
-    const [tableData, setTableData] = useState([])
-    const [columns, setColumns] = useState([])
+    const [userInfo, setUserInfo] = useState({});
+    const [tableData, setTableData] = useState([]);
+    const [columns, setColumns] = useState([]);
 
-    const dataRef = useRef()
+    const dataRef = useRef();
 
     const [optionList, setOptionList] = useState([
         { data: '상점', view: true },
         { data: '벌점', view: true },
         { data: '기타', view: true },
-    ])
+    ]);
 
     useEffect(() => {
-        init()
-    }, [])
+        init();
+    }, []);
 
     async function init() {
-        const userInfoData = await getData('/api/user', { userID })
-        if (userInfoData['msg']) return
+        const userInfoData = await getData('/api/user', { userID });
+        if (userInfoData['msg']) return;
 
-        const { name, stuid, plus, minus, history } = userInfoData
-        const etc = 0
-        setUserInfo({ name, stuid, plus, minus, etc, points: plus - minus })
+        const { name, stuid, plus, minus, history } = userInfoData;
+        const etc = 0;
+        setUserInfo({ name, stuid, plus, minus, etc, points: plus - minus });
 
-        dataRef.current = userInfoData
+        dataRef.current = userInfoData;
 
-        setupTable(userInfoData)
+        setupTable(userInfoData);
     }
 
     function setupTable(data) {
-        if (!data) return
+        if (!data) return;
 
-        const { name, stuid, history } = data
+        const { name, stuid, history } = data;
 
-        if (!history) return
+        if (!history) return;
 
         const userHistory = history.map((x, idx) => {
             const {
@@ -60,8 +60,8 @@ function MyPoints_View() {
                 beforeminus,
                 afterplus,
                 afterminus,
-            } = x
-            const delta = afterplus - beforeplus - (afterminus - beforeminus)
+            } = x;
+            const delta = afterplus - beforeplus - (afterminus - beforeminus);
 
             return [
                 '',
@@ -85,10 +85,10 @@ function MyPoints_View() {
                 <Button variant="danger" size="sm">
                     이의 제기
                 </Button>,
-            ]
-        })
+            ];
+        });
 
-        setTableData(userHistory)
+        setTableData(userHistory);
         setColumns([
             { data: '선택', orderable: false },
             { data: 'ID', className: 'dt-id' },
@@ -127,35 +127,35 @@ function MyPoints_View() {
             { data: '사유', className: 'dt-reason' },
             { data: '반영일시' },
             { data: '#', orderable: false },
-        ])
+        ]);
     }
 
     function optionHandler(e) {
-        e.stopPropagation()
+        e.stopPropagation();
     }
 
     function optionSelect(e, idx, list) {
-        e = e || window.event
+        e = e || window.event;
 
-        const arr = [...list]
-        arr[idx].view = !arr[idx].view
+        const arr = [...list];
+        arr[idx].view = !arr[idx].view;
 
-        const { history } = dataRef.current
+        const { history } = dataRef.current;
 
         const finalData = history.filter((data) => {
-            const { beforeplus, beforeminus, afterplus, afterminus } = data
-            const delta = afterplus - beforeplus - (afterminus - beforeminus)
+            const { beforeplus, beforeminus, afterplus, afterminus } = data;
+            const delta = afterplus - beforeplus - (afterminus - beforeminus);
 
-            const type = delta < 0 ? 1 : 0
+            const type = delta < 0 ? 1 : 0;
 
-            return arr[type].view
-        })
+            return arr[type].view;
+        });
 
-        setOptionList(arr)
+        setOptionList(arr);
         setupTable({
             ...dataRef.current,
             history: finalData,
-        })
+        });
     }
 
     return (
@@ -197,7 +197,7 @@ function MyPoints_View() {
                 </Card>
             </div>
         </>
-    )
+    );
 }
 
-export default MyPoints_View
+export default MyPoints_View;

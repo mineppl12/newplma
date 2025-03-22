@@ -9,17 +9,11 @@ import MySwal from '~shared/ui/sweetalert';
 
 import './index.scss';
 
+import { getData } from '~shared/scripts/getData';
+
 import { Card, Button, Dropdown, Form } from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
-
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    });
-
-    return response.data;
-}
 
 function Points_History() {
     const [tableData, setTableData] = useState([]);
@@ -50,7 +44,18 @@ function Points_History() {
         if (!data) return;
 
         const dataList = data.map((x, idx) => {
-            const { id, date, act_date, teacher, user, reason_caption, beforeplus, beforeminus, afterplus, afterminus } = x;
+            const {
+                id,
+                date,
+                act_date,
+                teacher,
+                user,
+                reason_caption,
+                beforeplus,
+                beforeminus,
+                afterplus,
+                afterminus,
+            } = x;
             const delta = afterplus - beforeplus - (afterminus - beforeminus);
 
             return [

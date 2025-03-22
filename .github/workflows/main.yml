@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+
         
       - name: Add SSH private key to agent
         uses: webfactory/ssh-agent@v0.5.3
@@ -23,11 +25,9 @@ jobs:
           SERVER_USER: ${{ secrets.SSH_USER }}
           SERVER_IP: ${{ secrets.SSH_HOST }}
           APP_DIR: ${{ secrets.WORK_DIR }}
-        run: |
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 $SERVER_USER@$SERVER_IP "
-          cd $APP_DIR &&
-          git remote set-url origin git@github.com:mineppl12/newplma.git &&
-          git pull origin main &&
-          npm install &&
-          npm run build
+        run: 
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -p 9988 $SERVER_USER@$SERVER_IP  "
+          cd $APP_DIR;
+          ./build.sh;
+          
           "

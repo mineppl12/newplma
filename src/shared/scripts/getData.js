@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 async function getData(url, params = {}) {
-  const response = await axios.get(url, {
-    params,
-  });
+    url = url.replace(/^\/api/, import.meta.env.VITE_API_BASE);
 
-  return response.data;
+    const response = await axios.get(url, {
+        params,
+    });
+
+    return response.data;
 }
 
-export default getData;
+export { getData };
