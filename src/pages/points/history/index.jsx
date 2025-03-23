@@ -359,25 +359,24 @@ function Points_History() {
             if (result.isConfirmed) {
                 const { pointType, point, reason, act_date, reasonCaption } =
                     result.value;
+                console.log(result.value);
 
                 // 여기에 수정된 데이터를 서버로 전송하는 로직 추가
                 axios
                     .put(`/api/points/history/${id}`, {
                         pointType,
-                        point,
+                        point: parseInt(point),
                         reason,
                         act_date,
                         reasonCaption,
                     })
                     .then((res) => {
-                        console.log(res);
-                        ///성공 시
-                        if (res.ok) {
-                            MySwal.fire('수정되었습니다.', '', 'success');
-                            refreshData();
-                        } else {
-                            MySwal.fire('수정에 실패했습니다.', '', 'error');
-                        }
+                        MySwal.fire('수정되었습니다.', '', 'success');
+                        refreshData();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        MySwal.fire('수정에 실패했습니다.', '', 'error');
                     });
             }
         });
