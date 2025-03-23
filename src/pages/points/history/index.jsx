@@ -21,13 +21,6 @@ function Points_History() {
 
     const dataRef = useRef();
     const reasonsRef = useRef([]);
-    const inputsRef = useRef({
-        pointType: 'good',
-        point: 0,
-        reason: 0,
-        act_date: moment().format('YYYY-MM-DD'),
-        reasonCaption: '',
-    });
 
     const [dataLoading, setDataLoading] = useState(false);
 
@@ -37,7 +30,7 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
-    const inputs = useRef({});
+    const inputsRef = useRef({});
 
     useEffect(() => {
         init();
@@ -55,7 +48,7 @@ function Points_History() {
     function setupTable(data) {
         if (!data) return;
 
-        const dataList = data.map((x, idx) => {
+        const dataList = data.map((x) => {
             const {
                 id,
                 date,
@@ -88,9 +81,11 @@ function Points_History() {
                     <span className="score">{Math.abs(delta)}점</span>
                 </>,
                 delta,
-                reason_caption.length > 30
-                    ? reason_caption.substring(0, 30) + '...'
-                    : reason_caption,
+                reason_caption
+                    ? reason_caption.length > 30
+                        ? reason_caption.substring(0, 30) + '...'
+                        : reason_caption
+                    : '',
                 moment(act_date).format('YYYY-MM-DD'),
                 <>
                     <Button
@@ -182,12 +177,13 @@ function Points_History() {
     function handleSelectReason(e) {
         const reasonId = e.target.value;
         const reasons = reasonsRef.current;
-        const reason = reasons.find((x) => x.id == reasonId);
+        const reasonCaption = reasons.find((x) => x.id == reasonId).title;
+        console.log(reasonCaption);
 
-        inputs.current = {
-            ...inputs.current,
+        inputsRef.current = {
+            ...inputsRef.current,
             reason: reasonId,
-            reasonCaption: reason,
+            reasonCaption,
         };
     }
 
@@ -232,8 +228,8 @@ function Points_History() {
     const handleChange = (e) => {
         const { name, value } = e.target; // name 속성 가져오기
 
-        inputs.current = {
-            ...inputs.current,
+        inputsRef.current = {
+            ...inputsRef.current,
             [name]: value,
         };
     };
@@ -254,6 +250,13 @@ function Points_History() {
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
         const pointType = delta < 0 ? 'bad' : 'good';
+        inputsRef.current = {
+            pointType,
+            point: Math.abs(delta),
+            reason,
+            act_date,
+            reasonCaption: reason_caption,
+        };
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -338,12 +341,10 @@ function Points_History() {
             showCancelButton: true,
             confirmButtonText: '확인',
             cancelButtonText: '취소',
-            didOpen: () => {
-                document.getElementById('editForm').reset();
-            },
+
             preConfirm: () => {
                 const { pointType, point, reason, act_date, reasonCaption } =
-                    inputs.current;
+                    inputsRef.current;
 
                 if (
                     !(pointType || point || reason || act_date || reasonCaption)

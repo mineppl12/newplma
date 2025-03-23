@@ -76,26 +76,28 @@ function Points_Apply() {
     const handleApplyRecord = () => {
         const entries = tableData.map((entry) => {
             const [
-                _,
+                _, // ID
                 act_date,
                 grade,
                 classNum,
                 studentNum,
+                __, // name (stuid)
                 plusPoints,
                 minusPoints,
-                totalPoints,
+                ___, // updatedTotalPoints
                 reason,
                 reasonCaption,
             ] = entry;
+
             return {
                 act_date,
                 grade,
                 classNum,
                 num: studentNum,
-                reason,
-                reasonCaption,
                 plusPoints: parseInt(plusPoints),
                 minusPoints: parseInt(minusPoints),
+                reason,
+                reasonCaption,
             };
         });
 
@@ -347,17 +349,10 @@ function Points_Apply() {
                                             variant=""
                                             className="flex-grow-1 text-start border"
                                         >
-                                            {reasons.find((reason) => {
-                                                console.log('b');
-                                                console.log(
-                                                    reason.id,
-                                                    inputs.reason
-                                                );
-
-                                                return (
-                                                    reason.id === inputs.reason
-                                                );
-                                            })?.title || '사유 선택'}
+                                            {reasons.find(
+                                                (reason) =>
+                                                    reason.id == inputs.reason
+                                            )?.title || '사유 선택'}
                                         </Dropdown.Toggle>
 
                                         <Dropdown.Menu
