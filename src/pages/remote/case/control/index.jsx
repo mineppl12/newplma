@@ -3,25 +3,19 @@ import { useState, useEffect } from 'react';
 
 import './index.scss';
 
-import axios from 'axios';
 import moment from 'moment';
+
+import { getData, postData } from '~shared/scripts/getData';
 
 import DataTable from '~shared/ui/datatable';
 import { Card, Button } from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    });
-
-    return response.data;
-}
-
 function Case_Control() {
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const [dataLoading, setDataLoading] = useState(false);
 
     useEffect(() => {
         init();
@@ -69,6 +63,16 @@ function Case_Control() {
         ]);
     }
 
+    async function doAll(modeTo) {
+        if (dataLoading) return;
+
+        if (modeTo == 'open') postData(`/api/remote/case`);
+
+        setDataLoading(true);
+        await init(true);
+        setDataLoading(false);
+    }
+
     return (
         <>
             <div id="case_control">
@@ -86,6 +90,28 @@ function Case_Control() {
                                 options={{
                                     search: false,
                                     pagination: false,
+                                    button: [
+                                        <Button
+                                            className="tableButton"
+                                            onClick={() => {
+                                                doAll('open');
+                                            }}
+                                            disabled={dataLoading}
+                                            variant="success"
+                                        >
+                                            전체 해제
+                                        </Button>,
+                                        <Button
+                                            className="tableButton"
+                                            onClick={() => {
+                                                doAll('close');
+                                            }}
+                                            disabled={dataLoading}
+                                            variant="danger"
+                                        >
+                                            전체 잠금
+                                        </Button>,
+                                    ],
                                 }}
                             />
                         </div>

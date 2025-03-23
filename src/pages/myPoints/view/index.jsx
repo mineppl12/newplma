@@ -30,7 +30,10 @@ function MyPoints_View() {
     }, []);
 
     async function init() {
-        const userInfoData = await getData('/api/user', { userID });
+        const userInfoData = await getData('/api/points/user_history', {
+            userID,
+        });
+        console.log(userInfoData);
         if (userInfoData['msg']) return;
 
         const { name, stuid, plus, minus, history } = userInfoData;
