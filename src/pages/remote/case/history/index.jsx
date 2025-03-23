@@ -23,12 +23,14 @@ function Case_History() {
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
 
+    const [dataLoading, setDataLoading] = useState(false);
+
     useEffect(() => {
         init();
     }, []);
 
-    async function init() {
-        let dataList = await getData('/api/remote/case/history');
+    async function init(allData = false) {
+        let dataList = await getData('/api/remote/case/history', { allData });
 
         dataList = dataList.map((x, idx) => {
             const { id, operatedBy, affected, statusTo, operatedAt } = x;
@@ -54,6 +56,22 @@ function Case_History() {
         ]);
     }
 
+    async function refreshData() {
+        if (dataLoading) return;
+
+        setDataLoading(true);
+        await init();
+        setDataLoading(false);
+    }
+
+    async function allData() {
+        if (dataLoading) return;
+
+        setDataLoading(true);
+        await init(true);
+        setDataLoading(false);
+    }
+
     return (
         <>
             <div id="case_history">
@@ -71,8 +89,26 @@ function Case_History() {
                                 order={[0, 'desc']}
                                 options={{
                                     language: {
-                                        search: '통합 검색:',
+                                        search: '통합 검색: ',
                                     },
+                                    button: [
+                                        <Button
+                                            className="tableButton"
+                                            onClick={refreshData}
+                                            disabled={dataLoading}
+                                            variant="primary"
+                                        >
+                                            새로고침
+                                        </Button>,
+                                        <Button
+                                            className="tableButton"
+                                            onClick={allData}
+                                            disabled={dataLoading}
+                                            variant="primary"
+                                        >
+                                            전체 기록 조회
+                                        </Button>,
+                                    ],
                                 }}
                             />
                         </div>
