@@ -25,7 +25,7 @@ function Points_History() {
         pointType: 'good',
         point: 0,
         reason: 0,
-        date: moment().format('YYYY-MM-DD'),
+        act_date: moment().format('YYYY-MM-DD'),
         reasonCaption: '',
     });
 
@@ -37,18 +37,7 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
-<<<<<<< HEAD
-    const [inputs, setInputs] = useState({
-        pointType: 'good',
-        point: 0,
-        reason: 0,
-        date: moment().format('YYYY-MM-DD'),
-        reasonCaption: '',
-    });
-    console.log('render');
-=======
     const inputs = useRef({});
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
 
     useEffect(() => {
         init();
@@ -195,13 +184,8 @@ function Points_History() {
         const reasons = reasonsRef.current;
         const reason = reasons.find((x) => x.id == reasonId);
 
-<<<<<<< HEAD
-        inputsRef.current = {
-            ...inputsRef.current,
-=======
         inputs.current = {
             ...inputs.current,
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
             reason: reasonId,
             reasonCaption: reason,
         };
@@ -230,38 +214,28 @@ function Points_History() {
             confirmButtonText: '확인',
             showCancelButton: true,
             cancelButtonText: '취소',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`/api/points/history/${x.id}`).then((res) => {
-                    if (res.ok) {
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`/api/points/history/${x.id}`).then((res) => {
+                        console.log(res);
                         MySwal.fire('삭제되었습니다.', '', 'success');
                         refreshData();
-                    } else {
-                        MySwal.fire('삭제에 실패했습니다.', '', 'error');
-                    }
-                });
-            }
-        });
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                MySwal.fire('삭제에 실패했습니다.', '', 'error');
+            });
     }
-
     const handleChange = (e) => {
         const { name, value } = e.target; // name 속성 가져오기
 
-<<<<<<< HEAD
-        inputsRef.current = {
-            ...inputsRef.current,
-            [name]: value,
-        };
-        // setInputs((prevState) => ({
-        //     ...prevState,
-        //     [name]: value,
-        // }));
-=======
         inputs.current = {
             ...inputs.current,
             [name]: value,
         };
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
     };
 
     const handleClickEdit = (x) => {
@@ -279,18 +253,7 @@ function Points_History() {
             afterminus,
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
-<<<<<<< HEAD
-        const input = {
-            pointType: delta < 0 ? 'bad' : 'good',
-            point: Math.abs(delta),
-            reason: reason - 1,
-            date: act_date,
-            reasonCaption: reason_caption,
-        };
-        inputsRef.current = input;
-=======
         const pointType = delta < 0 ? 'bad' : 'good';
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -299,11 +262,7 @@ function Points_History() {
                         <Form.Group controlId="pointType">
                             <Form.Label>상벌점 유형</Form.Label>
                             <Form.Select
-<<<<<<< HEAD
-                                defaultValue={inputsRef.current.pointType}
-=======
                                 defaultValue={pointType}
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
                                 name="pointType"
                                 onChange={handleChange}
                             >
@@ -319,11 +278,7 @@ function Points_History() {
                                 type="number"
                                 placeholder="점수를 입력하세요"
                                 min="0"
-<<<<<<< HEAD
-                                defaultValue={inputsRef.current.point}
-=======
                                 defaultValue={Math.abs(delta)}
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
                                 name="point"
                                 onChange={handleChange}
                             />
@@ -387,30 +342,42 @@ function Points_History() {
                 document.getElementById('editForm').reset();
             },
             preConfirm: () => {
-                const {
-                    pointType: type,
-                    point,
-                    reason,
-                    date,
-                    reasonCaption,
-<<<<<<< HEAD
-                } = inputsRef.current;
-=======
-                } = inputs.current;
->>>>>>> 3af079dfc6ba74e55b9ff657a6828e010a37081a
+                const { pointType, point, reason, act_date, reasonCaption } =
+                    inputs.current;
 
-                if (!(type || point || reason || date || reasonCaption)) {
+                if (
+                    !(pointType || point || reason || act_date || reasonCaption)
+                ) {
                     MySwal.showValidationMessage('적어도 하나는 수정해주세요.');
                     return false;
                 }
 
-                return { type, point, reason, date, reasonCaption };
+                return { pointType, point, reason, act_date, reasonCaption };
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                const { type, reason, reasonCaption, point, date } =
+                const { pointType, point, reason, act_date, reasonCaption } =
                     result.value;
+
                 // 여기에 수정된 데이터를 서버로 전송하는 로직 추가
+                axios
+                    .put(`/api/points/history/${id}`, {
+                        pointType,
+                        point,
+                        reason,
+                        act_date,
+                        reasonCaption,
+                    })
+                    .then((res) => {
+                        console.log(res);
+                        ///성공 시
+                        if (res.ok) {
+                            MySwal.fire('수정되었습니다.', '', 'success');
+                            refreshData();
+                        } else {
+                            MySwal.fire('수정에 실패했습니다.', '', 'error');
+                        }
+                    });
             }
         });
     };
