@@ -21,6 +21,13 @@ function Points_History() {
 
     const dataRef = useRef();
     const reasonsRef = useRef([]);
+    const inputsRef = useRef({
+        pointType: 'good',
+        point: 0,
+        reason: 0,
+        date: moment().format('YYYY-MM-DD'),
+        reasonCaption: '',
+    });
 
     const [dataLoading, setDataLoading] = useState(false);
 
@@ -30,15 +37,12 @@ function Points_History() {
         { data: '기타', view: true },
     ]);
 
-    const [inputs, setInputs] = useState(() => {
-        console.log('initialize');
-        return {
-            pointType: 'good',
-            point: 0,
-            reason: 1,
-            date: moment().format('YYYY-MM-DD'),
-            reasonCaption: '',
-        };
+    const [inputs, setInputs] = useState({
+        pointType: 'good',
+        point: 0,
+        reason: 0,
+        date: moment().format('YYYY-MM-DD'),
+        reasonCaption: '',
     });
     console.log('render');
 
@@ -187,11 +191,11 @@ function Points_History() {
         const reasons = reasonsRef.current;
         const reason = reasons.find((x) => x.id == reasonId);
 
-        setInputs((prevState) => ({
-            ...prevState,
+        inputsRef.current = {
+            ...inputsRef.current,
             reason: reasonId,
             reasonCaption: reason,
-        }));
+        };
     }
 
     async function refreshData() {
@@ -234,10 +238,14 @@ function Points_History() {
     const handleChange = (e) => {
         const { name, value } = e.target; // name 속성 가져오기
 
-        setInputs((prevState) => ({
-            ...prevState,
+        inputsRef.current = {
+            ...inputsRef.current,
             [name]: value,
-        }));
+        };
+        // setInputs((prevState) => ({
+        //     ...prevState,
+        //     [name]: value,
+        // }));
     };
 
     const handleClickEdit = (x) => {
@@ -262,6 +270,7 @@ function Points_History() {
             date: act_date,
             reasonCaption: reason_caption,
         };
+        inputsRef.current = input;
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -270,7 +279,7 @@ function Points_History() {
                         <Form.Group controlId="pointType">
                             <Form.Label>상벌점 유형</Form.Label>
                             <Form.Select
-                                defaultValue={inputs.pointType}
+                                defaultValue={inputsRef.current.pointType}
                                 name="pointType"
                                 onChange={handleChange}
                             >
@@ -286,7 +295,7 @@ function Points_History() {
                                 type="number"
                                 placeholder="점수를 입력하세요"
                                 min="0"
-                                defaultValue={inputs.point}
+                                defaultValue={inputsRef.current.point}
                                 name="point"
                                 onChange={handleChange}
                             />
@@ -346,6 +355,9 @@ function Points_History() {
             showCancelButton: true,
             confirmButtonText: '확인',
             cancelButtonText: '취소',
+            didOpen: () => {
+                document.getElementById('editForm').reset();
+            },
             preConfirm: () => {
                 const {
                     pointType: type,
@@ -353,7 +365,7 @@ function Points_History() {
                     reason,
                     date,
                     reasonCaption,
-                } = inputs;
+                } = inputsRef.current;
 
                 if (!type || !point || !reason || !date || !reasonCaption) {
                     MySwal.showValidationMessage('모든 필드를 입력해주세요.');
