@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 
 import postData from '~shared/scripts/postData';
 import './index.scss';
+import MySwal from '~shared/ui/sweetalert';
 
 import {
     Card,
@@ -74,6 +75,14 @@ function Points_Apply() {
     };
 
     const handleApplyRecord = () => {
+        if (tableData.length == 0) {
+            MySwal.fire({
+                icon: 'warning',
+                title: '경고',
+                text: '상벌점을 부여할 학생을 선택해주세요.',
+            });
+            return;
+        }
         const entries = tableData.map((entry) => {
             const [
                 _, // ID
@@ -104,14 +113,21 @@ function Points_Apply() {
         console.log(entries);
         // API 호출
         postData('/api/points', entries)
-            .then((response) => {
-                console.log(response.data);
-                alert('상벌점이 성공적으로 부여되었습니다.');
+            .then((res) => {
+                MySwal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: '상벌점이 성공적으로 부여되었습니다.',
+                });
                 init();
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('상벌점 부여에 실패했습니다.');
+            .catch((err) => {
+                console.error(err);
+                MySwal.fire({
+                    icon: 'error',
+                    title: '실패',
+                    text: '상벌점 부여에 실패했습니다.',
+                });
             });
     };
 
