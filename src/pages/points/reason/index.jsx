@@ -7,7 +7,7 @@ import MySwal from '~shared/ui/sweetalert';
 
 import { getData } from '~shared/scripts/getData.js';
 
-import { Card, Button, Dropdown } from 'react-bootstrap';
+import { Card, Button, Dropdown, Form, Row, Col } from 'react-bootstrap';
 import DataTable from '~shared/ui/datatable';
 
 import './index.scss';
@@ -35,7 +35,11 @@ function Points_Reason() {
 
         dataRef.current = data;
 
-        setupTable(data);
+        const filteredData = data.filter((x) => {
+            /// x.dpc가 1이면 삭제된 데이터로 간주
+            return x.dpc == 0;
+        });
+        setupTable(filteredData);
     }
 
     function setupTable(data) {
@@ -56,10 +60,20 @@ function Points_Reason() {
                 </>,
                 delta,
                 <>
-                    <Button className="editButton" variant="primary" size="sm">
+                    <Button
+                        className="editButton"
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleClickEdit(x)}
+                    >
                         수정
                     </Button>
-                    <Button className="editButton" variant="danger" size="sm">
+                    <Button
+                        className="editButton"
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleClickDelete(x)}
+                    >
                         삭제
                     </Button>
                 </>,
@@ -126,6 +140,118 @@ function Points_Reason() {
         setOptionList(arr);
         setupTable(finalData);
     }
+
+    /// handle delete
+    const handleClickDelete = (x) => {
+        const { id } = x;
+        MySwal.fire({
+            title: '사유 삭제',
+            text: `사유를 삭제하시겠습니까?`,
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .delete(`/api/points/reason/${id}`)
+                    .then((res) => {
+                        MySwal.fire({
+                            title: '삭제 완료',
+                            icon: 'success',
+                            confirmButtonText: '확인',
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        MySwal.fire({
+                            title: '삭제 실패',
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                        });
+                    });
+            }
+        });
+    };
+
+    const handleClickEdit = (x) => {
+        const { id, title, plus, minus } = x;
+        MySwal.fire({
+            title: '사유 수정',
+            html: (
+                <form>
+                    <div className="form-group mb-3">
+                        <label htmlFor="reasonTitle" className="form-label">
+                            사유
+                        </label>
+                        <Form.Control
+                            type="text"
+                            id="reasonTitle"
+                            placeholder="사유를 입력하세요"
+                            defaultValue={title}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <Row className="mb-3">
+                            <Col md={6}>
+                                <Form.Group controlId="plus">
+                                    <Form.Label>상점</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        placeholder="상점을 입력하세요"
+                                        defaultValue={plus}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="minus">
+                                    <Form.Label>벌점</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        placeholder="벌점을 입력하세요"
+                                        defaultValue={minus}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </div>
+                </form>
+            ),
+            showCancelButton: true,
+            confirmButtonText: '수정',
+            cancelButtonText: '취소',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const reasonTitle =
+                    document.getElementById('reasonTitle').value;
+                const plus = document.getElementById('plus').value;
+                const minus = document.getElementById('minus').value;
+
+                axios
+                    .put(`/api/points/reason/${id}`, {
+                        id,
+                        title: reasonTitle,
+                        plus,
+                        minus,
+                    })
+                    .then((res) => {
+                        MySwal.fire({
+                            title: '수정 완료',
+                            icon: 'success',
+                            confirmButtonText: '확인',
+                        });
+                        init();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        MySwal.fire({
+                            title: '수정 실패',
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                        });
+                    });
+            }
+        });
+    };
 
     return (
         <>
