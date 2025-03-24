@@ -82,6 +82,7 @@ function Case_Control() {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text className="label">보관함 조작</Card.Text>
+                        <br />
                         <div className="tableWrap">
                             <DataTable
                                 className="remoteCaseControl"

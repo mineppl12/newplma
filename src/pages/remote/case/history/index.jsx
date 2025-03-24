@@ -81,6 +81,7 @@ function Case_History() {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text className="label">보관함 기록</Card.Text>
+                        <br />
                         <div className="tableWrap">
                             <DataTable
                                 className="remoteCaseHistoryTable"

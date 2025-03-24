@@ -41,6 +41,11 @@
         }
     }
 
+    .tableContent {
+        width: 100%;
+        overflow-x: auto;
+    }
+
     .dataTable {
         width: 100%;
         height: auto;

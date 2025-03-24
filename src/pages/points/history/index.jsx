@@ -281,13 +281,8 @@ function Points_History() {
         } = x;
         const delta = afterplus - beforeplus - (afterminus - beforeminus);
         const pointType = delta < 0 ? 'bad' : 'good';
-        inputsRef.current = {
-            pointType,
-            point: Math.abs(delta),
-            reason,
-            act_date,
-            reasonCaption: reason_caption,
-        };
+
+        inputsRef.current = {};
 
         const modalContent = (
             <Form id="editForm" className="p-3">
@@ -403,7 +398,7 @@ function Points_History() {
                     })
                     .then((res) => {
                         MySwal.fire('수정되었습니다.', '', 'success');
-                        refreshData();
+                        init();
                     })
                     .catch((error) => {
                         console.error(error);
@@ -423,6 +418,7 @@ function Points_History() {
                     <Card.Body>
                         <div className="tableWrap">
                             <Card.Text className="label">상벌점 기록</Card.Text>
+                            <br />
                             <DataTable
                                 className="historyTable"
                                 columns={columns}
@@ -452,7 +448,6 @@ function Points_History() {
                                         ///excel export button
                                         <ButtonGroup aria-label="Basic example">
                                             <Button
-                                                className="tableButton"
                                                 onClick={exportExcel}
                                                 variant="success"
                                             >
