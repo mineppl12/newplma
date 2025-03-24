@@ -8,7 +8,7 @@ import {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
-library.add(fas)
+library.add(fas);
 
 // ###
 
@@ -26,6 +26,9 @@ import MyPoints_View from '~pages/myPoints/view';
 
 import Dorm_Status from '~pages/dorm/status';
 import Dorm_Settings from '~pages/dorm/settings';
+
+import MyDorm_View from '~pages/myDorm/view';
+import MyDorm_Repair from '~pages/myDorm/repair';
 
 import Case_Control from '~pages/remote/case/control';
 import Case_History from '~pages/remote/case/history';
@@ -95,7 +98,7 @@ function Layout() {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 const routesWithPermissions = [
@@ -116,6 +119,8 @@ const routesWithPermissions = [
 
     { pathKey: pathKeys.dorm.status(), element: <Dorm_Status /> },
     { pathKey: pathKeys.dorm.settings(), element: <Dorm_Settings /> },
+    { pathKey: pathKeys.dorm.myDorm.view(), element: <MyDorm_View /> },
+    { pathKey: pathKeys.dorm.myDorm.repair(), element: <MyDorm_Repair /> },
 
     { pathKey: pathKeys.plma.accounts(), element: <PLMA_Accounts /> },
     { pathKey: pathKeys.iam.accounts(), element: <IAM_Accounts /> },
@@ -137,7 +142,7 @@ const browserRouter = createBrowserRouter([
         element: <Layout />,
         children: [...filteredRoutes, { path: '*', element: <Page404 /> }],
     },
-])
+]);
 
 export default function AppRouter() {
     return <RouterProvider router={browserRouter} />;
