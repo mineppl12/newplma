@@ -1,30 +1,40 @@
-#points_reason{
-    .pointsReasonTable{    
-        .dt-reason{
+#points_reason {
+    .pointsReasonTable {
+        .dt-reason {
             width: 60%;
         }
 
-        .dt-content{
+        .dt-content {
             font-weight: bolder;
 
-            .type{
+            .type {
                 color: #fff;
                 padding-inline: 5px;
                 padding-block: 2px;
                 border-radius: 3px;
                 margin-right: 10px;
 
-                &.good { background: limegreen; }
-                &.bad { background: red; }
+                &.good {
+                    color: #00631b;
+                    background: #8affa7;
+                }
+                &.bad {
+                    color: crimson;
+                    background: #ffcfd4;
+                }
+                &.etc {
+                    color: #424242;
+                    background: #dfdfdf;
+                }
             }
 
             text-wrap: wrap;
         }
 
-        .dt-button{
-            .editButton{
-                margin-left: .1rem;
-                margin-right: .1rem;
+        .dt-button {
+            .editButton {
+                margin-left: 0.1rem;
+                margin-right: 0.1rem;
             }
         }
     }
