@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import axios from 'axios';
-import MySwal from '~shared/scripts/Swal';
+import MySwal from '~shared/ui/sweetalert';
 import DataTable from '~shared/ui/datatable';
 import { Card, Button } from 'react-bootstrap';
 
@@ -113,12 +113,7 @@ function PLMA_Accounts() {
                     >
                         편집
                     </Button>
-                    <Button
-                        className="rowButton"
-                        variant="danger"
-                        size="sm"
-                        onClick={handleClickDelete}
-                    >
+                    <Button className="rowButton" variant="danger" size="sm">
                         삭제
                     </Button>
                 </>,
