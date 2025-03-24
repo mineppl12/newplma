@@ -1,75 +1,85 @@
-.tableWrapper{
+.tableWrapper {
     width: 100%;
     height: max-content;
     position: relative;
     display: flex;
     flex-flow: column nowrap;
 
-    .tableHeader{
+    .tableHeader {
         width: 100%;
         min-height: 30px;
         position: relative;
         margin-bottom: 10px;
 
-        .button_wrap{
+        .button_wrap {
             display: flex;
 
-            .tableButton{
-                margin-right: .1rem;
+            .tableButton {
+                margin-right: 0.1rem;
             }
         }
-        
-        .input_wrap{
+
+        .input_wrap {
             position: absolute;
-            top: 50%; right: 0;
+            top: 50%;
+            right: 0;
             transform: translate(0, -50%);
             display: flex;
 
-            .filterText{
+            .filterText {
                 position: relative;
                 margin: 0;
                 margin-right: 10px;
                 font-size: 1rem;
-                padding-block: .2rem;
+                padding-block: 0.2rem;
             }
 
-            .filterInput{
+            .filterInput {
                 outline: none;
                 padding-left: 5px;
             }
         }
     }
 
-    .dataTable{
+    .dataTable {
         width: 100%;
         height: auto;
         table-layout: auto;
-    
-        thead{
-            tr{
-                th{
+
+        thead {
+            tr {
+                th {
                     position: relative;
-                    padding-block: .5rem;
+                    padding-block: 0.5rem;
                     padding-inline: 1rem;
                     text-align: center;
                     border: 1px solid rgba(#000, 0.1);
-                    border-bottom: 1px solid rgba(#000, .3);
+                    border-bottom: 1px solid rgba(#000, 0.3);
                     white-space: nowrap;
-    
-                    &.dt-column-orderable{
+
+                    &.dt-column-orderable {
                         padding-right: 2.5rem;
                         cursor: pointer;
-    
-                        .dt-column-order{
-                            width: 1.5rem; height: 100%;
+
+                        .dt-column-order {
+                            width: 1.5rem;
+                            height: 100%;
                             position: absolute;
-                            top: 0; right: 0.5rem;
+                            top: 0;
+                            right: 0.5rem;
                             text-align: center;
-        
-                            &::before { content: '↑'; left: 0; }
-                            &::after { content: '↓'; right: 0; }
-        
-                            &::after, &::before{
+
+                            &::before {
+                                content: '↑';
+                                left: 0;
+                            }
+                            &::after {
+                                content: '↓';
+                                right: 0;
+                            }
+
+                            &::after,
+                            &::before {
                                 width: max-content;
                                 color: rgba(0, 0, 0, 0.3);
                                 position: absolute;
@@ -79,35 +89,39 @@
                                 font-weight: bold;
                             }
                         }
-                        
-                        &.dt-column-ordered{
-                            &.dt-column-ordered-asc{
-                                .dt-column-order::before { color: #555; }
+
+                        &.dt-column-ordered {
+                            &.dt-column-ordered-asc {
+                                .dt-column-order::before {
+                                    color: #555;
+                                }
                             }
-    
-                            &.dt-column-ordered-desc{
-                                .dt-column-order::after { color: #555; }
+
+                            &.dt-column-ordered-desc {
+                                .dt-column-order::after {
+                                    color: #555;
+                                }
                             }
-                        }    
-    
-                        &:hover{
-                            box-shadow: 0 0 2px 1px rgba(#222, .1) inset;
+                        }
+
+                        &:hover {
+                            box-shadow: 0 0 2px 1px rgba(#222, 0.1) inset;
                         }
                     }
                 }
             }
         }
-    
-        tbody{
-            tr{
-                &:nth-child(odd){
-                    background: rgba(#888, .1);
+
+        tbody {
+            tr {
+                &:nth-child(odd) {
+                    background: rgba(#888, 0.1);
                 }
 
-                td{
+                td {
                     padding: 0;
-                    padding-inline: .5rem;
-                    padding-block: .75rem;
+                    padding-inline: 0.5rem;
+                    padding-block: 0.75rem;
                     border: 1px solid rgba(#000, 0.2);
                     text-align: center;
                     white-space: nowrap;
@@ -116,7 +130,7 @@
         }
     }
 
-    .tablePagination{
+    .tablePagination {
         height: max-content;
         display: flex;
         flex-flow: column nowrap;

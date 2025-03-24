@@ -38,6 +38,10 @@ body {
             background: #f9f9f9;
             position: absolute;
             top: calc($space * 0.5);
+            @if ($space == 0px) {
+                padding: 10px;
+                padding-top: 15px;
+            }
             left: calc($space * 0.5);
             margin-bottom: $space;
             border: 1px solid rgba(0, 0, 0, 0.125);

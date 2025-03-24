@@ -12,7 +12,15 @@ import './index.scss';
 
 import { getData } from '~shared/scripts/getData';
 
-import { Card, Button, Dropdown, Form, Row, Col } from 'react-bootstrap';
+import {
+    Card,
+    Button,
+    ButtonGroup,
+    Dropdown,
+    Form,
+    Row,
+    Col,
+} from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
@@ -442,13 +450,16 @@ function Points_History() {
                                             전체 기록 조회
                                         </Button>,
                                         ///excel export button
-                                        <Button
-                                            className="tableButton"
-                                            onClick={exportExcel}
-                                            variant="success"
-                                        >
-                                            Excel
-                                        </Button>,
+                                        <ButtonGroup aria-label="Basic example">
+                                            <Button
+                                                className="tableButton"
+                                                onClick={exportExcel}
+                                                variant="success"
+                                            >
+                                                Excel
+                                            </Button>
+                                            <Button>7</Button>
+                                        </ButtonGroup>,
                                     ],
                                 }}
                             />

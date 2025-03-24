@@ -1,90 +1,104 @@
-@use "~shared/styles/variables.scss" as *;
+@use '~shared/styles/variables.scss' as *;
 
-::-webkit-scrollbar { width: 0; }
+::-webkit-scrollbar {
+    width: 0;
+}
 
-.sidebar{
+.sidebar {
     $width: $sidebarWidth;
 
     width: $width;
     height: 100%;
     position: fixed;
-    @if ($devMode) { background: #acf; }
+    @if ($devMode) {
+        background: #acf;
+    }
 
-    .sidebar_wrap{
+    .sidebar_wrap {
         width: calc($width - $space * 2);
         height: calc(100% - $space * 3);
         background: #343a40;
         position: absolute;
-        top: calc($space * 1.5); left: calc($space * 1.5);
+        top: calc($space * 1.5);
+        left: calc($space * 1.5);
         border-radius: calc($space);
         overflow-y: hidden;
-    
+
         z-index: 2;
     }
-    
+
     $headHeight: 75px;
 
-    .head{
+    .head {
         width: 100%;
         height: $headHeight;
         position: absolute;
         cursor: pointer;
 
-        .logo{
+        .logo {
             width: $headHeight * 0.7;
             height: $headHeight * 0.7;
             position: absolute;
-            top: 50%; left: 20px;
+            top: 50%;
+            left: calc($width * 0.05);
             transform: translate(0, -50%);
         }
 
-        .title{
+        .title {
             width: max-content;
             height: 50px;
             color: $textColorLight;
             position: absolute;
-            top: 50%; left: calc(30px + $headHeight * 0.7);
+            top: 50%;
+            left: calc($width * 0.05 + 10px + $headHeight * 0.7);
             transform: translate(0, -50%);
             font-size: 15px;
             line-height: 25px;
-            font-family: "Sejong";
+            font-family: 'Sejong';
             font-weight: 100;
 
-            span { display: block; }
-            .subtitle { font-size: 25px; }
+            span {
+                display: block;
+            }
+            .subtitle {
+                font-size: 25px;
+            }
         }
 
-        &::after{
+        &::after {
             content: '';
             width: 90%;
             height: 1px;
-            background: rgba($textColorLight, .3);
+            background: rgba($textColorLight, 0.3);
             position: absolute;
-            left: 50%; bottom: 0;
+            left: 50%;
+            bottom: 0;
             transform: translate(-50%, 0);
         }
     }
 
-    .body{
+    .body {
         width: 100%;
         height: calc(100% - $headHeight);
         position: absolute;
         bottom: 0;
         overflow-y: scroll;
 
-        .group{
+        .group {
             width: 100%;
             margin-top: 40px;
 
-            &.noLegend { margin-top: 0px; }
-            &:nth-last-child(1){ 
+            &.noLegend {
+                margin-top: 0px;
+            }
+            &:nth-last-child(1) {
                 padding-bottom: 150px;
             }
 
-            .legend{
+            .legend {
                 width: max-content;
                 height: 20px;
-                color: rgba($textColorLight, .6);
+                color: rgba($textColorLight, 0.6);
                 position: relative;
                 top: 5px;
                 font-size: 15px;
@@ -93,19 +107,20 @@
                 margin: 0;
             }
 
-            .linkWrap{
+            .linkWrap {
                 width: 90%;
                 height: auto;
                 position: relative;
-                top: 10px; left: 5%;
+                top: 10px;
+                left: 5%;
                 list-style: none;
                 overflow: hidden;
-                transition: max-height .8s;
+                transition: max-height 0.8s;
                 padding: 0;
                 margin: 0;
 
-                .link{
-                    $linkColor: rgba($textColorLight, .8);
+                .link {
+                    $linkColor: rgba($textColorLight, 0.8);
 
                     width: 100%;
                     height: 40px;
@@ -114,25 +129,27 @@
                     position: relative;
                     margin-top: 5px;
                     cursor: pointer;
-                    transition: background-color .2s;
+                    transition: background-color 0.2s;
                     display: block;
 
                     border-radius: 5px;
 
-                    .icon{
+                    .icon {
                         width: 20px;
                         height: 20px;
                         position: absolute;
-                        top: 50%; left: 16px;
+                        top: 50%;
+                        left: 16px;
                         transform: translate(0, -50%);
                     }
 
-                    .links{
+                    .links {
                         width: max-content;
                         height: 100%;
                         color: $linkColor;
                         position: absolute;
-                        top: 0; left: 50px;
+                        top: 0;
+                        left: 50px;
                         text-decoration: none;
                         line-height: 40px;
                         font-size: 16px;
@@ -140,52 +157,57 @@
                         outline: none;
                     }
 
-                    .slide{
+                    .slide {
                         width: 15px;
                         height: 15px;
                         color: $textColorLight;
                         position: absolute;
-                        top: 50%; right: 10px;
+                        top: 50%;
+                        right: 10px;
                         transform: translate(0, -50%) rotate(0);
-                        transition: transform .3s;
+                        transition: transform 0.3s;
                     }
 
-                    &.headerLink{
-                        background: rgba($textColorLight, .1);
+                    &.headerLink {
+                        background: rgba($textColorLight, 0.1);
                     }
 
-                    &:hover{
-                        background: rgba($textColorLight, .1);
+                    &:hover {
+                        background: rgba($textColorLight, 0.1);
                     }
 
-                    &.watching{
+                    &.watching {
                         color: $textColorDark;
-                        background: #FFF8F3;
+                        background: #fff8f3;
 
-                        .links { color: $textColorDark; }
+                        .links {
+                            color: $textColorDark;
+                        }
                     }
                 }
 
-                &.watching{
-                    .headerLink{
+                &.watching {
+                    .headerLink {
                         background: #007bff;
-                        color: #FFF8F3;
+                        color: #fff8f3;
 
-                        .links { color: #FFF8F3; }
+                        .links {
+                            color: #fff8f3;
+                        }
                     }
                 }
 
-                &.menu-open{
-                    .slide{
+                &.menu-open {
+                    .slide {
                         transform: translate(0, -50%) rotate(-90deg);
                     }
                 }
 
-                .wrap{
+                .wrap {
                     max-height: 0;
                     height: auto;
                     overflow: hidden;
-                    transition: max-height .3s;
+                    transition: max-height 0.3s;
                 }
             }
         }

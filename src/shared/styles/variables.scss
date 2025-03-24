@@ -8,9 +8,9 @@ $backgroundColor: #f0f0f0;
 $textColorLight: #f0f0f0;
 $textColorDark: #121212;
 
-$sidebarWidth: 300px;
-$navbarHeight: 100px;
-$space: 10px;
+$sidebarWidth: 250px;
+$navbarHeight: 80px;
+$space: 0px;
 
 $devMode: false;
 
@@ -22,13 +22,13 @@ $devMode: false;
         @content;
     }
 }
-  
-@mixin animation($str){
+
+@mixin animation($str) {
     -webkit-animation: #{$str};
     animation: #{$str};
 }
 
 @font-face {
-    font-family: "Sejong";
-    src: url("/font/sejong.ttf");
+    font-family: 'Sejong';
+    src: url('/font/sejong.ttf');
 }

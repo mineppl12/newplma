@@ -1,4 +1,4 @@
-import { pathKeys } from '~shared/lib/react-router/pathKey.js'
+import { pathKeys } from '~shared/lib/react-router/pathKey.js';
 
 export const config = [
     {
@@ -135,7 +135,7 @@ export const config = [
             {
                 header: {
                     icon: 'table-cells-column-lock',
-                    name: '휴대폰 보관함 관리',
+                    name: '보관함 관리',
                 },
                 links: [
                     {
@@ -216,4 +216,4 @@ export const config = [
             },
         ],
     },
-]
+];
