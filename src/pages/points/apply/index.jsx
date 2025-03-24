@@ -516,6 +516,7 @@ function Points_Apply() {
                                 newTableData.shift();
                                 setTableData(newTableData);
                             }}
+                            disabled={tableData.length == 0}
                         >
                             마지막 행 삭제
                         </Button>
@@ -526,6 +527,7 @@ function Points_Apply() {
                             variant="success"
                             type="button"
                             onClick={handleApplyRecord}
+                            disabled={tableData.length == 0}
                         >
                             적용
                         </Button>

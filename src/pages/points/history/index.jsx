@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 
 import axios from 'axios';
 import moment from 'moment';
+import * as XLSX from 'xlsx';
 
 import DataTable from '~shared/ui/datatable';
 import MySwal from '~shared/ui/sweetalert';
@@ -202,6 +203,28 @@ function Points_History() {
         await init(true);
         setDataLoading(false);
     }
+
+    const exportExcel = () => {
+        const data = tableData.map((x) => {
+            return {
+                ID: x[1],
+                기준일자: x[2],
+                권한자: x[3],
+                '성명 (학번)': x[4].props.children.join(''),
+                반영내용: x[7],
+                사유: x[8],
+                반영일시: x[9],
+            };
+        });
+
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(
+            wb,
+            `상벌점 조회 결과 (${moment().format('YYYY-MM-DD')}).xlsx`
+        );
+    };
 
     function handleClickDelete(x) {
         MySwal.fire({
@@ -417,6 +440,14 @@ function Points_History() {
                                             variant="primary"
                                         >
                                             전체 기록 조회
+                                        </Button>,
+                                        ///excel export button
+                                        <Button
+                                            className="tableButton"
+                                            onClick={exportExcel}
+                                            variant="success"
+                                        >
+                                            Excel
                                         </Button>,
                                     ],
                                 }}

@@ -10,7 +10,7 @@ import { Card, Badge, Button, Dropdown } from 'react-bootstrap';
 import DataTable from '~shared/ui/datatable';
 
 const TITLE = import.meta.env.VITE_TITLE;
-const userID = 32001; // 32067
+const userID = 34084; // 32067
 
 function MyPoints_View() {
     const [userInfo, setUserInfo] = useState({});
@@ -30,7 +30,9 @@ function MyPoints_View() {
     }, []);
 
     async function init() {
-        const userInfoData = await getData('/api/user', { userID });
+        const userInfoData = await getData('/api/points/user_history', {
+            userID,
+        });
         if (userInfoData['msg']) return;
 
         const { name, stuid, plus, minus, history } = userInfoData;

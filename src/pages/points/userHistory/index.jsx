@@ -32,7 +32,9 @@ function Points_UserHistory() {
 
     async function init() {
         const { userID } = params;
-        const userInfoData = await getData('/api/user_history', { userID });
+        const userInfoData = await getData('/api/points/user_history', {
+            userID,
+        });
         if (userInfoData['msg']) return;
 
         const { name, stuid, plus, minus, history } = userInfoData;
