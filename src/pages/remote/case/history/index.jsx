@@ -11,13 +11,7 @@ import { Card, Button } from 'react-bootstrap';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
-async function getData(url, params = {}) {
-    const response = await axios.get(`${url}`, {
-        params: params,
-    });
-
-    return response.data;
-}
+import { getData } from '~shared/scripts/getData';
 
 function Case_History() {
     const [columns, setColumns] = useState([]);
