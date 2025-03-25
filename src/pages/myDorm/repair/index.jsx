@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './index.scss';
 import { Card, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
+import moment from 'moment';
+import { getData } from '~shared/scripts/getData';
 
 import MySwal from '~shared/ui/sweetalert';
+import DataTable from '~shared/ui/datatable';
 
 function MyDorm_Repair() {
     const [user, setUser] = useState({
@@ -14,13 +17,17 @@ function MyDorm_Repair() {
     });
 
     const [description, setDescription] = useState('');
+    const dataRef = useRef([]);
+
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         // Call api to fetch user info by axios
         // axios.get('/api/userInfo').then((res) => {
         //     setUserInfo(res.data);
         // });
-
+        init();
         setUser({
             id: 32020,
             name: '강재환',
@@ -28,6 +35,60 @@ function MyDorm_Repair() {
             room_id: '501',
         });
     }, []);
+
+    async function init(allData = false) {
+        const data = await getData('/api/dorms/reports');
+        // const data = [];
+        dataRef.current = data;
+        setupTable(data);
+    }
+
+    function setupTable(data) {
+        if (!data) return;
+
+        const dataList = data.map((x) => {
+            const {
+                id,
+                created_at,
+                user_name,
+                user_stuid,
+                description,
+                status,
+                image_url,
+            } = x;
+            return [
+                <Form.Check type="checkbox" key={image_url}>
+                    <Form.Check.Input type="checkbox" isValid />
+                </Form.Check>,
+                id,
+                moment(created_at).format('YYYY-MM-DD'),
+                `${user_name} (${user_stuid})`,
+                description,
+                /// status: pending, in_progress, completed
+                status === 'pending' ? (
+                    <span className="text">대기 중</span>
+                ) : status === 'in_progress' ? (
+                    <span className="text-primary">처리 중</span>
+                ) : (
+                    <span className="text-success">완료</span>
+                ),
+
+                <a href={image_url}>#</a>,
+            ];
+        });
+
+        setColumns([
+            /// 수리 신청 내역 조회 테이블 컬럼 (형식: {data: '', ...})
+            { data: '선택', orderable: false },
+            { data: 'ID' },
+            { data: '신청 날짜' },
+            { data: '신청자' },
+            { data: '상세 내용' },
+            { data: '상태' },
+            { data: '사진' },
+        ]);
+        setTableData(dataList);
+    }
 
     const handleChange = (e) => {
         setDescription(e.target.value);
@@ -43,7 +104,7 @@ function MyDorm_Repair() {
         formData.append('image', uploadedImage); // 이미지 파일 추가
         //Call api to submit repair request by axios
         axios
-            .post('/api/dorm/reports', formData, {
+            .post('/api/dorms/reports', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -142,6 +203,20 @@ function MyDorm_Repair() {
                                 제출
                             </Button>
                         </Form>
+                    </Card.Body>
+                </Card>
+
+                <Card>
+                    <Card.Header>
+                        <Card.Title>기숙사 고장 신고 내역 조회</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <p>신고 내역 조회</p>
+                        <DataTable
+                            columns={columns}
+                            data={tableData}
+                            order={[1, 'desc']}
+                        />
                     </Card.Body>
                 </Card>
             </div>
