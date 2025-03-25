@@ -31,7 +31,7 @@ function MyDorm_Repair() {
         setUser({
             id: 32020,
             name: '강재환',
-            stuid: '9999',
+            stuid: '9988',
             room_id: '501',
         });
     }, []);
