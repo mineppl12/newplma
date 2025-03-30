@@ -2,11 +2,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 import './index.scss';
-import { lightning_bolt } from "~shared/scripts/lightning_bolt.js";
+import { lightning_bolt } from '~shared/scripts/lightning_bolt.js';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
-function Home(){
+function Home() {
     const canvasRef = useRef(null);
     const ctxRef = useRef(null);
 
@@ -14,7 +14,7 @@ function Home(){
         width: window.innerWidth,
         height: window.innerHeight,
     });
-    
+
     const resizeHandler = useCallback(() => {
         setStageSize({ width: window.innerWidth, height: window.innerHeight });
     }, []);
@@ -26,25 +26,25 @@ function Home(){
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-    
+
         canvas.width = stageSize.width;
         canvas.height = stageSize.height;
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         ctxRef.current = ctx;
 
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        
-        draw(ctx);
-      }, [stageSize]);
 
-    function init(){
+        draw(ctx);
+    }, [stageSize]);
+
+    function init() {
         window.addEventListener('resize', resizeHandler);
         return () => {
             window.removeEventListener('resize', resizeHandler);
         };
     }
 
-    function draw(ctx){
+    function draw(ctx) {
         ctx.fillStyle = '#001C30';
 
         ctx.fillRect(0, 0, stageSize.width, stageSize.height);
@@ -52,22 +52,22 @@ function Home(){
         lightning_bolt(ctx, stageSize);
     }
 
-    return(
+    return (
         <>
-        <div id="about">
-            <canvas
-                width={stageSize.width}
-                height={stageSize.height}
-                tabIndex={0}
-                ref={canvasRef}
-            ></canvas>
+            <div id="about">
+                <canvas
+                    width={stageSize.width}
+                    height={stageSize.height}
+                    tabIndex={0}
+                    ref={canvasRef}
+                ></canvas>
 
-            <div className="textwrap">
-                <h1 className="name">강창완</h1>
+                <div className="textwrap">
+                    <h1 className="name">강창완</h1>
+                </div>
             </div>
-        </div>
         </>
-    )
+    );
 }
 
 export default Home;

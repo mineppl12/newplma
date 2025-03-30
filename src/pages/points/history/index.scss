@@ -1,3 +1,5 @@
+@use '~shared/styles/variables.scss' as *;
+
 #points_history {
     .tableWrap {
         width: 100%;
@@ -10,20 +12,20 @@
             }
 
             .dt-content {
-                font-weight: bolder;
-
                 .type {
                     padding-inline: 5px;
                     padding-block: 2px;
                     border-radius: 3px;
                     margin-right: 10px;
+                    font-family: 'Noto Sans KR', sans-serif;
+                    font-weight: 700;
 
                     &.good {
                         color: #00631b;
                         background: #8affa7;
                     }
                     &.bad {
-                        color: crimson;
+                        color: #ff0000;
                         background: #ffcfd4;
                     }
                     &.etc {

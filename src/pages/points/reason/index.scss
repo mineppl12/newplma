@@ -13,13 +13,14 @@
                 padding-block: 2px;
                 border-radius: 3px;
                 margin-right: 10px;
+                font-weight: bolder;
 
                 &.good {
                     color: #00631b;
                     background: #8affa7;
                 }
                 &.bad {
-                    color: crimson;
+                    color: #f00;
                     background: #ffcfd4;
                 }
                 &.etc {

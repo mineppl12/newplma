@@ -36,7 +36,7 @@ function IAM_Accounts() {
                 grade,
                 className,
                 num,
-                gender == 'female' ? '여' : '남',
+                'PLMA, CLUBS',
                 <>
                     <Button className="rowButton" variant="primary" size="sm">
                         편집
@@ -56,7 +56,7 @@ function IAM_Accounts() {
             { data: '학년' },
             { data: '반' },
             { data: '번호' },
-            { data: '성별' },
+            { data: '연결된 서비스' },
             { data: '#', orderable: false },
         ]);
     }
