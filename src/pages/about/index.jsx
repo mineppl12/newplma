@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 import './index.scss';
 import { lightning_bolt } from '~shared/scripts/lightning_bolt.js';
+import { background } from '~shared/scripts/about/background';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
@@ -50,6 +51,9 @@ function Home() {
         ctx.fillRect(0, 0, stageSize.width, stageSize.height);
 
         lightning_bolt(ctx, stageSize);
+        const { drawPoints, drawTriangles } = background(ctx, stageSize);
+
+        drawTriangles();
     }
 
     return (
