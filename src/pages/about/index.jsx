@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import './index.scss';
 import { lightning_bolt } from '~shared/scripts/lightning_bolt.js';
 import { background } from '~shared/scripts/about/background';
+import { Person } from '~shared/scripts/about/person';
 
 const TITLE = import.meta.env.VITE_TITLE;
 
@@ -46,14 +47,20 @@ function Home() {
     }
 
     function draw(ctx) {
-        ctx.fillStyle = '#001C30';
+        //ctx.fillStyle = '#001C30';
+        ctx.fillStyle = '#03001C';
 
         ctx.fillRect(0, 0, stageSize.width, stageSize.height);
 
         lightning_bolt(ctx, stageSize);
-        const { drawPoints, drawTriangles } = background(ctx, stageSize);
+        const { drawPoints, drawVoronoi, drawTriangles } = background(
+            ctx,
+            stageSize
+        );
+        Person(ctx, stageSize);
 
-        drawTriangles();
+        // drawTriangles();
+        drawVoronoi();
     }
 
     return (
