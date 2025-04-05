@@ -1,0 +1,154 @@
+import { useState, useEffect, useRef } from 'react';
+import './index.scss';
+import { Card, Form, Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import moment from 'moment';
+import { getData } from '~shared/scripts/getData';
+
+import DataTable from '~shared/ui/datatable';
+import MySwal from '~shared/ui/sweetalert';
+import axios from 'axios';
+
+function MyDorm_Repair() {
+    const dataRef = useRef([]);
+
+    const [columns, setColumns] = useState([]);
+    const [tableData, setTableData] = useState([]);
+
+    useEffect(() => {
+        // Call api to fetch user info by axios
+        // axios.get('/api/userInfo').then((res) => {
+        //     setUserInfo(res.data);
+        // });
+        init();
+    }, []);
+
+    const handleClickDelete = (id) => {
+        MySwal.fire({
+            title: '취소',
+            text: '정말로 취소하시겠습니까?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '확인',
+            cancelButtonText: '취소',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/api/dorms/reports/${id}`).then(() => {
+                    MySwal.fire(
+                        '취소 완료',
+                        '신청이 취소되었습니다.',
+                        'success'
+                    );
+                });
+            }
+        });
+    };
+
+    const handleSelectStatus = (id, e) => {
+        const status = e.target.name;
+        console.log(id, status);
+        axios.put(`/api/dorms/reports/${id}`, { status }).then(() => {
+            MySwal.fire('상태 변경', '상태가 변경되었습니다.', 'success');
+            init();
+        });
+    };
+
+    async function init() {
+        const data = await getData('/api/admin/dorms/reports');
+        // const data = [];
+        dataRef.current = data;
+        setupTable(data);
+    }
+
+    function setupTable(data) {
+        if (!data) return;
+
+        const dataList = data.map((x) => {
+            const {
+                id,
+                created_at,
+                room_name,
+                user_name,
+                user_stuid,
+                description,
+                status,
+                image_url,
+            } = x;
+            return [
+                <Form.Check type="checkbox" key={image_url}>
+                    <Form.Check.Input type="checkbox" isValid />
+                </Form.Check>,
+                id,
+                room_name,
+                moment(created_at).format('YYYY-MM-DD'),
+                `${user_name} (${user_stuid})`,
+                description,
+                /// status: pending, in_progress, completed
+                <DropdownButton
+                    id="dropdown-basic-button"
+                    title={
+                        status === 'pending'
+                            ? '대기 중'
+                            : status === 'in_progress'
+                              ? '처리 중'
+                              : '처리 완료'
+                    }
+                    key={`dropdown-${id}`}
+                    drop={'right'}
+                    onSelect={(eventKey, event) =>
+                        handleSelectStatus(id, event)
+                    }
+                >
+                    <Dropdown.Item name="pending">대기 중</Dropdown.Item>
+                    <Dropdown.Item name="in_progress">처리 중</Dropdown.Item>
+                    <Dropdown.Item name="completed">처리 완료</Dropdown.Item>
+                </DropdownButton>,
+                <a href={image_url} key={image_url} target="_blank">
+                    #
+                </a>,
+                <Button
+                    variant="danger"
+                    size="sm"
+                    key={`cancel-${image_url}`}
+                    onClick={() => handleClickDelete(id)}
+                >
+                    취소
+                </Button>,
+            ];
+        });
+
+        setColumns([
+            /// 수리 신청 내역 조회 테이블 컬럼 (형식: {data: '', ...})
+            { data: '선택', orderable: false },
+            { data: 'ID' },
+            { data: '방' },
+            { data: '신청 날짜' },
+            { data: '신청자' },
+            { data: '상세 내용' },
+            { data: '상태' },
+            { data: '사진' },
+            { data: '#' },
+        ]);
+        setTableData(dataList);
+    }
+    return (
+        <>
+            <div className="myDorm-repair">
+                <Card>
+                    <Card.Header>
+                        <Card.Title>기숙사 고장 신고 내역 조회</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <p>신고 내역 조회</p>
+                        <DataTable
+                            columns={columns}
+                            data={tableData}
+                            order={[1, 'desc']}
+                        />
+                    </Card.Body>
+                </Card>
+            </div>
+        </>
+    );
+}
+
+export default MyDorm_Repair;

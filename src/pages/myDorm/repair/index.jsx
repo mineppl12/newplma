@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './index.scss';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import moment from 'moment';
 import { getData } from '~shared/scripts/getData';
@@ -36,9 +36,29 @@ function MyDorm_Repair() {
         });
     }, []);
 
-    async function init(allData = false) {
+    const handleClickDelete = () => {
+        MySwal.fire({
+            title: '취소',
+            text: '정말로 취소하시겠습니까?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '확인',
+            cancelButtonText: '취소',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/api/dorms/reports/${id}`).then(() => {
+                    MySwal.fire(
+                        '취소 완료',
+                        '신청이 취소되었습니다.',
+                        'success'
+                    );
+                });
+            }
+        });
+    };
+
+    async function init() {
         const data = await getData('/api/dorms/reports');
-        // const data = [];
         dataRef.current = data;
         setupTable(data);
     }
@@ -50,6 +70,7 @@ function MyDorm_Repair() {
             const {
                 id,
                 created_at,
+                room_name,
                 user_name,
                 user_stuid,
                 description,
@@ -61,6 +82,7 @@ function MyDorm_Repair() {
                     <Form.Check.Input type="checkbox" isValid />
                 </Form.Check>,
                 id,
+                room_name,
                 moment(created_at).format('YYYY-MM-DD'),
                 `${user_name} (${user_stuid})`,
                 description,
@@ -73,7 +95,18 @@ function MyDorm_Repair() {
                     <span className="text-success">완료</span>
                 ),
 
-                <a href={image_url}>#</a>,
+                <a href={image_url} key={image_url} target="_blank">
+                    #
+                </a>,
+                /// 취소 버튼
+                <Button
+                    variant="danger"
+                    size="sm"
+                    key={`cancel-${image_url}`}
+                    onClick={handleClickDelete}
+                >
+                    취소
+                </Button>,
             ];
         });
 
@@ -81,11 +114,13 @@ function MyDorm_Repair() {
             /// 수리 신청 내역 조회 테이블 컬럼 (형식: {data: '', ...})
             { data: '선택', orderable: false },
             { data: 'ID' },
+            { data: '방' },
             { data: '신청 날짜' },
             { data: '신청자' },
             { data: '상세 내용' },
             { data: '상태' },
             { data: '사진' },
+            { data: '#' },
         ]);
         setTableData(dataList);
     }

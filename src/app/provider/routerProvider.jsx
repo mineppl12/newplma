@@ -43,6 +43,7 @@ import Page404 from '~pages/404';
 import Navbar from '~shared/ui/navbar';
 import Sidebar from '~shared/ui/sidebar';
 import { pathKeys } from '~shared/lib/react-router/pathKey.js';
+import Dorm_Repair from '../../pages/dorm/repair';
 
 const userType = {
     student: new Set([
@@ -119,6 +120,8 @@ const routesWithPermissions = [
 
     { pathKey: pathKeys.dorm.status(), element: <Dorm_Status /> },
     { pathKey: pathKeys.dorm.settings(), element: <Dorm_Settings /> },
+    { pathKey: pathKeys.dorm.repair(), element: <Dorm_Repair /> },
+
     { pathKey: pathKeys.dorm.myDorm.view(), element: <MyDorm_View /> },
     { pathKey: pathKeys.dorm.myDorm.repair(), element: <MyDorm_Repair /> },
 

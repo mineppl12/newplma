@@ -5,7 +5,7 @@ import './index.scss';
 
 const maxViewPage = 5;
 
-const DataTable = ({ columns, data, order, className, options }) => {
+const DataTable = ({ columns, data, order, className, options, onClick }) => {
     const [sortMethod, setSortMethod] = useState({});
     const [rowPerPage, setRowPerPage] = useState(10);
     const [page, setPage] = useState(1);
@@ -269,6 +269,7 @@ const DataTable = ({ columns, data, order, className, options }) => {
                                                     <td
                                                         key={iidx}
                                                         className={`${columns[iidx] ? (columns[iidx].className ? columns[iidx].className : '') : ''}`}
+                                                        onClick={onClick}
                                                     >
                                                         {item}
                                                     </td>
