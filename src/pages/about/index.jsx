@@ -52,15 +52,15 @@ function Home() {
 
         ctx.fillRect(0, 0, stageSize.width, stageSize.height);
 
-        lightning_bolt(ctx, stageSize);
+        //lightning_bolt(ctx, stageSize);
         const { drawPoints, drawVoronoi, drawTriangles } = background(
             ctx,
             stageSize
         );
         Person(ctx, stageSize);
 
-        // drawTriangles();
-        drawVoronoi();
+        drawTriangles();
+        // drawVoronoi();
     }
 
     return (
