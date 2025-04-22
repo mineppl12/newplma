@@ -1,86 +1,128 @@
-@use "~shared/styles/variables.scss" as *;
+@use '~shared/styles/variables.scss' as *;
 
-#dorm_settings{
+#dorm_settings {
     width: 100%;
     height: 100%;
 
-    .card{
-        .card-header{
-            width: 100%;
-            height: 3rem;
-            border-bottom: 1px solid rgba(0,0,0,.125);
-            padding: 1.25rem;
-            padding-top: calc(.75rem + 1px);
+    .btn {
+        border-radius: 0;
+        padding-inline: 1.25rem;
+        margin-right: 1rem;
+    }
 
-            .card-title{
-                font-size: 1.1rem;
-                font-weight: 400;
-                margin: 0;
+    .tableWrap {
+        width: max-content;
+        height: auto;
+
+        .dt-layout-row {
+            margin: 0;
+        }
+
+        .tableWrapper .tableHeader {
+            display: none;
+        }
+    }
+
+    .remainingExcludedTable {
+        th {
+            color: #ff6565;
+        }
+    }
+
+    .studentsGrid {
+        .btn-danger {
+            width: 20%;
+            border: 0;
+            border-radius: 0.5rem;
+            background-color: #dbdbdb;
+            text-align: center;
+            margin: 0;
+            color: #ff6565;
+        }
+        .col {
+            button {
+                width: 100%;
+                border: 0;
+                border-radius: 0.5rem;
+                background-color: #dbdbdb;
+                text-align: center;
+                padding: 0.4rem 0;
+            }
+
+            strong {
+                color: #ff6565;
+            }
+
+            margin: 0.1rem 0;
+            padding: 0 0.2rem;
+        }
+    }
+
+    .dormSettingsTable {
+        tr {
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.03);
+            }
+
+            background-color: white;
+        }
+
+        th {
+            background: $jshsusColorDark;
+            color: $textColorLight;
+            padding-block: 0.25rem;
+            width: 100px;
+        }
+
+        td {
+            height: 10px;
+            line-height: 10px;
+            width: 100px;
+            padding-inline: 1.75rem;
+            // &:hover {
+            //     background: rgba(0, 0, 0, 0.1);
+            // }
+
+            &.selected {
+                background: #dbdbdb;
+            }
+
+            &:not(:empty) {
+                background-color: #c2c2c2;
+            }
+
+            strong {
+                color: #ff6565;
             }
         }
 
-        .card-body{
-            padding: 1.25rem;
+        th.dt-center,
+        td.dt-center {
+            text-align: center;
+            font-size: 16px;
+            text-wrap: nowrap;
+        }
 
-            .card-text.label{
-                margin-bottom: 0.5rem;
-                font-weight: 700;
-                font-size: 1rem;
-            }
+        td.dt-first {
+            background: $jshsusColorLight2;
+            color: $textColorLight;
+            padding-inline: 0.75rem;
+            font-weight: 700;
+        }
 
-            .btn{
-                border-radius: 3px;
-                padding-inline: 1.25rem;
-                margin-right: 1rem;
-            }
+        th.dt-first,
+        td.dt-first {
+            width: 70px;
+        }
 
-            .tableWrap{
-                width: max-content;
-                height: auto;
+        a {
+            color: #7696ff;
+            text-decoration: none;
 
-                .dt-layout-row{
-                    margin: 0;
-                }
-            }
-
-            .dormSettingsTable{
-                tr{
-                    cursor: pointer;
-        
-                    &:hover { background: rgba(0, 0, 0, .03); }
-                }
-
-                th{
-                    background: $jshsusColorDark;
-                    color: $textColorLight;
-                    padding-block: 0.25rem;
-                }
-
-                td{
-                    height: 40px;
-                    padding-inline: 1.75rem;
-                    &:hover { background: rgba(0, 0, 0, .1); }
-                }
-        
-                th.dt-center, td.dt-center{
-                    text-align: center;
-                    font-size: 16px;
-                    text-wrap: nowrap;
-                }
-        
-                td.dt-first{
-                    background: $jshsusColorLight2;
-                    color: $textColorLight;
-                    padding-inline: 0.75rem;
-                    font-weight: 700;
-                }
-        
-                a{
-                    color: #7696ff;
-                    text-decoration: none;
-        
-                    &:hover { color: #576db6; }
-                }
+            &:hover {
+                color: #576db6;
             }
         }
     }

@@ -14,6 +14,7 @@ import {
     Button,
 } from 'react-bootstrap';
 import { getData } from '~shared/scripts/getData';
+import axios from 'axios';
 
 import './index.scss';
 
@@ -23,30 +24,58 @@ const GRADES = [
     { name: '3학년', value: 3 },
 ];
 
-const filteredStudents = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Alice' },
-    { id: 4, name: 'Bob Brown' },
-];
-
 function Dorm_Settings() {
     const [grade, setGrade] = useState(1);
+    const [selectedCell, setSelectedCell] = useState({
+        row: 1,
+        col: 1,
+    });
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const dormUsersRef = useRef();
+
+    const usersRef = useRef();
+    const [dormUsers, setDormUsers] = useState([]);
+
     const filteredData = tableData.filter((x) => x[1] == grade);
     const handleChange = (val) => {
         setGrade(val);
     };
-    const handleStudentClick = (id) => {};
-    const [students, setStudents] = useState(filteredStudents);
+    const handleStudentClick = (id) => {
+        console.log('student id: ', id);
+        if (id == -1) {
+            setDormUsers((prev) => {
+                const newData = prev.map((item) => ({
+                    ...item,
+                    users: [...item.users],
+                }));
+                newData[selectedCell.row].users[selectedCell.col] = 'excluded';
+                return newData;
+            });
+
+            return;
+        }
+
+        const student = usersRef.current.find((student) => student.id == id);
+        if (!student) return;
+        setDormUsers((prev) => {
+            const newData = prev.map((item) => ({
+                ...item,
+                users: [...item.users],
+            }));
+            newData[selectedCell.row].users[selectedCell.col] = student;
+            return newData;
+        });
+    };
 
     ///init
     async function init(allData = false) {
         const data = await getData('/api/dorms', { allData });
-        dormUsersRef.current = data;
-        console.log(data);
+        setDormUsers(data);
+
+        // dormUsersRef.current = data;
+        const userData = await getData('/api/user', { allData });
+        usersRef.current = userData;
+        console.log(userData);
 
         const dataList = [];
 
@@ -73,56 +102,49 @@ function Dorm_Settings() {
     }
 
     useEffect(() => {
-        // const testList = [];
-
-        // for (let i = 0; i < 15; i++) {
-        //     testList.push([
-        //         `${String(500 + (i + 1))}호`,
-        //         '강재환',
-        //         '강재환',
-        //         '강재환',
-        //         '강재환',
-        //     ]);
-        // }
-
-        // setColumns([
-        //     { data: '호실', className: 'dt-first', orderable: false },
-        //     { data: '1반', orderable: false },
-        //     { data: '2반', orderable: false },
-        //     { data: '3반', orderable: false },
-        //     { data: '4반', orderable: false },
-        // ]);
-        // setTableData(testList);
-
-        /// get list from api(dorms/
         init();
     }, []);
 
-    const renderStudentGrid = () => {
+    const renderStudentsGrid = () => {
         const rows = [];
         const perRow = 5;
+
+        const students = usersRef.current
+            ? usersRef.current.filter(
+                  (user) =>
+                      user.grade == grade &&
+                      user.class == selectedCell.col + 1 &&
+                      !dormUsers.some((dorm) => dorm.users.includes(user))
+              )
+            : [];
+
+        students.unshift({
+            id: -1,
+            name: <strong>제외</strong>,
+            stuid: '',
+        });
+
+        // rows.push(
+        //     <Button
+        //         className="mb-2"
+        //         variant={'danger'}
+        //         onClick={() => handleStudentClick(-1)}
+        //     >
+        //         제외
+        //     </Button>
+        // );
 
         for (let i = 0; i < students.length; i += perRow) {
             const rowItems = students.slice(i, i + perRow);
             rows.push(
-                <Row key={i} className="mb-2">
+                <Row key={'row_' + i} className="mb-2" xs={5}>
                     {rowItems.map((student) => (
                         <Col
                             key={student.id}
-                            xs={12}
-                            sm={6}
-                            md={4}
-                            lg={2}
-                            xl={2}
+                            onClick={() => handleStudentClick(student.id)}
                         >
-                            <Button
-                                variant={'light'}
-                                className={
-                                    'w-100 border border-dark rounded text-center py-2 px-1 cursor-pointer'
-                                }
-                                onClick={() => handleStudentClick(student.id)}
-                            >
-                                {student.name}
+                            <Button variant={'light'}>
+                                {student.stuid} {student.name}
                             </Button>
                         </Col>
                     ))}
@@ -133,8 +155,128 @@ function Dorm_Settings() {
         return rows;
     };
 
+    const handleCellClick = (e) => {
+        const cell = e.target.closest('td');
+
+        if (cell) {
+            const prevCell = document.querySelector('.selected');
+            if (prevCell) prevCell.classList.remove('selected');
+            cell.classList.add('selected');
+            const rowIndex = cell.parentNode.rowIndex;
+            const colIndex = cell.cellIndex;
+            // const roomName = dormUsersRef.current[rowIndex - 1].room_name;
+            // const studentName =
+            //     dormUsersRef.current[rowIndex - 1].users[colIndex - 1]?.name;
+
+            setDormUsers((prev) => {
+                const newData = prev.map((item) => ({
+                    ...item,
+                    users: [...item.users],
+                }));
+                newData[rowIndex - 1].users[colIndex - 1] = null;
+                return newData;
+            });
+
+            // setTableData((prev) => {
+            //     const newData = prev.map((item) => [...item]);
+            //     newData[rowIndex - 1][colIndex + 1] = '';
+            //     return newData;
+            // });
+
+            setSelectedCell({
+                row: rowIndex - 1,
+                col: colIndex - 1,
+            });
+        }
+    };
+
+    const handleAssignRandomRooms = () => {
+        setDormUsers((prev) => {
+            const newData = prev.map((room) => ({
+                ...room,
+                users: Array.from({ length: 4 }, (_, i) =>
+                    room.users[i] ? room.users[i] : null
+                ),
+            }));
+
+            const availableStudents = usersRef.current.filter(
+                (user) =>
+                    user.grade === grade &&
+                    !newData.some((room) => room.users.includes(user))
+            );
+
+            for (let room of newData) {
+                if (room.room_grade != grade) continue;
+                for (let i = 0; i < room.users.length; i++) {
+                    if (room.users[i] === null) {
+                        const classIndex = i; // Match index to class (1반 -> 0, 2반 -> 1, etc.)
+                        const classStudents = availableStudents.filter(
+                            (student) => student.class === classIndex + 1
+                        );
+
+                        if (classStudents.length > 0) {
+                            const randomIndex = Math.floor(
+                                Math.random() * classStudents.length
+                            );
+                            room.users[i] = classStudents.splice(
+                                randomIndex,
+                                1
+                            )[0];
+                            availableStudents.splice(
+                                availableStudents.indexOf(room.users[i]),
+                                1
+                            );
+                        }
+                    }
+                }
+            }
+
+            console.log(newData);
+            return newData;
+        });
+    };
+
+    const handleSave = () => {
+        const data = dormUsers.map((room) => ({
+            room_name: room.room_name,
+            users: room.users.map((user) => {
+                if (user == 'excluded') return null;
+                else if (user == null) return null;
+                else return user.id; // Assuming user has an id property
+            }),
+        }));
+        console.log(data);
+        axios
+            .put('/api/dorms', data)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    useEffect(() => {
+        setTableData((prev) => {
+            const newData = prev.map((row, rowIndex) => {
+                const updatedRow = [...row];
+                dormUsers[rowIndex].users.forEach((user, colIndex) => {
+                    if (user == 'excluded') {
+                        updatedRow[colIndex + 2] = <strong>제외</strong>; // Adjusted to match the column index
+                    } else if (user == null) {
+                        updatedRow[colIndex + 2] = ''; // Adjusted to match the column index
+                    } else {
+                        updatedRow[colIndex + 2] = user.name; // Adjusted to match the column index
+                    }
+                });
+                return updatedRow;
+            });
+            return newData;
+        });
+    }, [dormUsers]);
+
     return (
-        <div id="dorm_status">
+        <div id="dorm_settings">
             <Card>
                 <Card.Header>
                     <Card.Title>기숙사 관리</Card.Title>
@@ -180,8 +322,59 @@ function Dorm_Settings() {
                         <div className="tableWrap">
                             <Card.Text className="label">호실</Card.Text>
                             <br />
+
+                            <div className="tableHeader">
+                                남은 제외인원
+                                <table className="table table-bordered remainingExcludedTable">
+                                    <thead>
+                                        <tr>
+                                            {['1반', '2반', '3반', '4반'].map(
+                                                (className, index) => {
+                                                    const remainingExcluded =
+                                                        usersRef.current
+                                                            ? dormUsers.filter(
+                                                                  (dorm) =>
+                                                                      dorm.room_grade ==
+                                                                      grade
+                                                              ).length -
+                                                              usersRef.current.filter(
+                                                                  (user) =>
+                                                                      user.grade ==
+                                                                          grade &&
+                                                                      user.class ==
+                                                                          index +
+                                                                              1
+                                                              ).length -
+                                                              dormUsers.filter(
+                                                                  (dorm) =>
+                                                                      /// equal class, and user is 'excluded'
+                                                                      dorm
+                                                                          .users[
+                                                                          index
+                                                                      ] ==
+                                                                      'excluded'
+                                                              ).length
+                                                            : 0;
+
+                                                    return (
+                                                        <th key={index}>
+                                                            {className}:{' '}
+                                                            <small>
+                                                                {
+                                                                    remainingExcluded
+                                                                }
+                                                            </small>
+                                                        </th>
+                                                    );
+                                                }
+                                            )}
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
                             <DataTable
-                                className="dormStatusTable"
+                                className="dormSettingsTable"
                                 columns={columns}
                                 data={filteredData}
                                 order={[0, 'asc']}
@@ -189,12 +382,47 @@ function Dorm_Settings() {
                                     pagination: false,
                                     search: false,
                                 }}
-                            />
+                                onClick={handleCellClick}
+                            ></DataTable>
                         </div>
 
-                        <div className="m-4 p-3 border rounded border-dark w-100">
-                            {renderStudentGrid()}
+                        <div className="m-4 p-3 border rounded border-dark w-100 studentsGrid">
+                            {renderStudentsGrid()}
                         </div>
+                    </div>
+
+                    <div className="d-flex justify-content-end">
+                        <Button
+                            variant="primary"
+                            className="me-2"
+                            onClick={handleSave}
+                        >
+                            저장
+                        </Button>
+                        <Button
+                            variant="danger"
+                            className="me-2"
+                            onClick={() =>
+                                setDormUsers(
+                                    // not void, but empty
+                                    dormUsers.map((room) => ({
+                                        ...room,
+                                        users: Array.from(
+                                            { length: 4 },
+                                            () => null
+                                        ),
+                                    }))
+                                )
+                            }
+                        >
+                            초기화
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            onClick={handleAssignRandomRooms}
+                        >
+                            무작위 방배정
+                        </Button>
                     </div>
                 </Card.Body>
             </Card>
