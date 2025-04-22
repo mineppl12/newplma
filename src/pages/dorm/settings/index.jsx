@@ -6,9 +6,6 @@ import {
     Card,
     ToggleButtonGroup,
     ToggleButton,
-    Container,
-    Tabs,
-    Tab,
     Row,
     Col,
     Button,
@@ -36,7 +33,7 @@ function Dorm_Settings() {
     const usersRef = useRef();
     const [dormUsers, setDormUsers] = useState([]);
 
-    const filteredData = tableData.filter((x) => x[1] == grade);
+    const filteredTableData = tableData.filter((x) => x[1] == grade);
     const handleChange = (val) => {
         setGrade(val);
     };
@@ -67,41 +64,39 @@ function Dorm_Settings() {
         });
     };
 
-    ///init
-    async function init(allData = false) {
-        const data = await getData('/api/dorms', { allData });
-        setDormUsers(data);
+    useEffect(() => {
+        async function init(allData = false) {
+            const data = await getData('/api/dorms', { allData });
+            setDormUsers(data);
 
-        // dormUsersRef.current = data;
-        const userData = await getData('/api/user', { allData });
-        usersRef.current = userData;
-        console.log(userData);
+            const userData = await getData('/api/user', { allData });
+            usersRef.current = userData;
+            console.log(userData);
 
-        const dataList = [];
+            const dataList = [];
 
-        for (let i = 0; i < data.length; i++) {
-            dataList.push([
-                `${String(data[i].room_name)}호`,
-                data[i].room_grade,
-                data[i].users[0] ? data[i].users[0].name : '',
-                data[i].users[1] ? data[i].users[1].name : '',
-                data[i].users[2] ? data[i].users[2].name : '',
-                data[i].users[3] ? data[i].users[3].name : '',
+            for (let i = 0; i < data.length; i++) {
+                dataList.push([
+                    `${String(data[i].room_name)}호`,
+                    data[i].room_grade,
+                    data[i].users[0] ? data[i].users[0].name : '',
+                    data[i].users[1] ? data[i].users[1].name : '',
+                    data[i].users[2] ? data[i].users[2].name : '',
+                    data[i].users[3] ? data[i].users[3].name : '',
+                ]);
+            }
+
+            setColumns([
+                { data: '호실', className: 'dt-first', orderable: false },
+                { data: 'grade', hidden: true },
+                { data: '1반', orderable: false },
+                { data: '2반', orderable: false },
+                { data: '3반', orderable: false },
+                { data: '4반', orderable: false },
             ]);
+            setTableData(dataList);
         }
 
-        setColumns([
-            { data: '호실', className: 'dt-first', orderable: false },
-            { data: 'grade', hidden: true },
-            { data: '1반', orderable: false },
-            { data: '2반', orderable: false },
-            { data: '3반', orderable: false },
-            { data: '4반', orderable: false },
-        ]);
-        setTableData(dataList);
-    }
-
-    useEffect(() => {
         init();
     }, []);
 
@@ -123,16 +118,6 @@ function Dorm_Settings() {
             name: <strong>제외</strong>,
             stuid: '',
         });
-
-        // rows.push(
-        //     <Button
-        //         className="mb-2"
-        //         variant={'danger'}
-        //         onClick={() => handleStudentClick(-1)}
-        //     >
-        //         제외
-        //     </Button>
-        // );
 
         for (let i = 0; i < students.length; i += perRow) {
             const rowItems = students.slice(i, i + perRow);
@@ -164,10 +149,6 @@ function Dorm_Settings() {
             cell.classList.add('selected');
             const rowIndex = cell.parentNode.rowIndex;
             const colIndex = cell.cellIndex;
-            // const roomName = dormUsersRef.current[rowIndex - 1].room_name;
-            // const studentName =
-            //     dormUsersRef.current[rowIndex - 1].users[colIndex - 1]?.name;
-
             setDormUsers((prev) => {
                 const newData = prev.map((item) => ({
                     ...item,
@@ -176,12 +157,6 @@ function Dorm_Settings() {
                 newData[rowIndex - 1].users[colIndex - 1] = null;
                 return newData;
             });
-
-            // setTableData((prev) => {
-            //     const newData = prev.map((item) => [...item]);
-            //     newData[rowIndex - 1][colIndex + 1] = '';
-            //     return newData;
-            // });
 
             setSelectedCell({
                 row: rowIndex - 1,
@@ -209,7 +184,7 @@ function Dorm_Settings() {
                 if (room.room_grade != grade) continue;
                 for (let i = 0; i < room.users.length; i++) {
                     if (room.users[i] === null) {
-                        const classIndex = i; // Match index to class (1반 -> 0, 2반 -> 1, etc.)
+                        const classIndex = i;
                         const classStudents = availableStudents.filter(
                             (student) => student.class === classIndex + 1
                         );
@@ -242,7 +217,7 @@ function Dorm_Settings() {
             users: room.users.map((user) => {
                 if (user == 'excluded') return null;
                 else if (user == null) return null;
-                else return user.id; // Assuming user has an id property
+                else return user.id;
             }),
         }));
         console.log(data);
@@ -320,9 +295,6 @@ function Dorm_Settings() {
 
                     <div className="d-flex flex-row mt-4 align-items-start">
                         <div className="tableWrap">
-                            <Card.Text className="label">호실</Card.Text>
-                            <br />
-
                             <div className="tableHeader">
                                 남은 제외인원
                                 <table className="table table-bordered remainingExcludedTable">
@@ -347,7 +319,6 @@ function Dorm_Settings() {
                                                               ).length -
                                                               dormUsers.filter(
                                                                   (dorm) =>
-                                                                      /// equal class, and user is 'excluded'
                                                                       dorm
                                                                           .users[
                                                                           index
@@ -376,7 +347,7 @@ function Dorm_Settings() {
                             <DataTable
                                 className="dormSettingsTable"
                                 columns={columns}
-                                data={filteredData}
+                                data={filteredTableData}
                                 order={[0, 'asc']}
                                 options={{
                                     pagination: false,
@@ -386,7 +357,7 @@ function Dorm_Settings() {
                             ></DataTable>
                         </div>
 
-                        <div className="m-4 p-3 border rounded border-dark w-100 studentsGrid">
+                        <div className="studentsGrid">
                             {renderStudentsGrid()}
                         </div>
                     </div>

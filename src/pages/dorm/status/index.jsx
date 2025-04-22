@@ -1,19 +1,16 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-import moment from 'moment';
 import DataTable from '~shared/ui/datatable';
 
 import { Card, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-
+import { getData } from '~shared/scripts/getData';
 import './index.scss';
-
-const TITLE = import.meta.env.VITE_TITLE;
 
 function Dorm_Status() {
     const [grade, setGrade] = useState(1);
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const filteredTableData = tableData.filter((x) => x[1] == grade);
 
     const grades = [
         { name: '1학년', value: 1 },
@@ -26,34 +23,43 @@ function Dorm_Status() {
     };
 
     useEffect(() => {
-        const testList = [];
+        async function init(allData = false) {
+            const data = await getData('/api/dorms', { allData });
 
-        for (let i = 0; i < 15; i++) {
-            testList.push([
-                `${String(500 + (i + 1))}호`,
-                '강재환',
-                '강재환',
-                '강재환',
-                '강재환',
+            // dormUsersRef.current = data;
+            const dataList = [];
+
+            for (let i = 0; i < data.length; i++) {
+                dataList.push([
+                    `${String(data[i].room_name)}호`,
+                    data[i].room_grade,
+                    data[i].users[0] ? data[i].users[0].name : '',
+                    data[i].users[1] ? data[i].users[1].name : '',
+                    data[i].users[2] ? data[i].users[2].name : '',
+                    data[i].users[3] ? data[i].users[3].name : '',
+                ]);
+            }
+
+            setColumns([
+                { data: '호실', className: 'dt-first', orderable: false },
+                { data: 'grade', hidden: true },
+                { data: '1반', orderable: false },
+                { data: '2반', orderable: false },
+                { data: '3반', orderable: false },
+                { data: '4반', orderable: false },
             ]);
+            setTableData(dataList);
         }
 
-        setColumns([
-            { data: '호실', className: 'dt-first', orderable: false },
-            { data: '1반', orderable: false },
-            { data: '2반', orderable: false },
-            { data: '3반', orderable: false },
-            { data: '4반', orderable: false },
-        ]);
-        setTableData(testList);
+        init();
     }, []);
 
     return (
         <>
-            <div id="dorm_settings">
+            <div id="dorm_status">
                 <Card>
                     <Card.Header>
-                        <Card.Title>기숙사 관리</Card.Title>
+                        <Card.Title>기숙사 현황</Card.Title>
                     </Card.Header>
                     <Card.Body>
                         <Card.Text className="label">학년 선택</Card.Text>
@@ -85,10 +91,14 @@ function Dorm_Status() {
                             <br />
                             <Card.Text className="label">호실 현황</Card.Text>
                             <DataTable
-                                className="dormSettingsTable"
+                                className="dormStatusTable"
                                 columns={columns}
-                                data={tableData}
+                                data={filteredTableData}
                                 order={[0, 'asc']}
+                                options={{
+                                    pagination: false,
+                                    search: false,
+                                }}
                             />
                         </div>
                     </Card.Body>

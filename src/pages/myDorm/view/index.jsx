@@ -1,4 +1,3 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import DataTable from '~shared/ui/datatable';
@@ -7,89 +6,31 @@ import { Card, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 
 import './index.scss';
 
-const TITLE = import.meta.env.VITE_TITLE;
-
 function MyDorm_View() {
-    const [grade, setGrade] = useState(1);
-    const [columns, setColumns] = useState([]);
-    const [tableData, setTableData] = useState([]);
-
-    const grades = [
-        { name: '1학년', value: 1 },
-        { name: '2학년', value: 2 },
-        { name: '3학년', value: 3 },
-    ];
-
-    const handleChange = (val) => {
-        setGrade(val);
-    };
-
-    useEffect(() => {
-        const testList = [];
-
-        for (let i = 0; i < 15; i++) {
-            testList.push([
-                `${String(500 + (i + 1))}호`,
-                '강재환',
-                '강재환',
-                '강재환',
-                '강재환',
-            ]);
-        }
-
-        setColumns([
-            { data: '호실', className: 'dt-first', orderable: false },
-            { data: '1반', orderable: false },
-            { data: '2반', orderable: false },
-            { data: '3반', orderable: false },
-            { data: '4반', orderable: false },
-        ]);
-        setTableData(testList);
-    }, []);
-
     return (
         <>
-            <div id="dorm_status">
+            <div id="mydorm_view">
                 <Card>
                     <Card.Header>
-                        <Card.Title>기숙사 관리</Card.Title>
+                        <Card.Title>내 기숙사 현황</Card.Title>
                     </Card.Header>
+                    {/* use ul / li, 표시될 정보: 이름(학번), 호실, 침대위치 */}
                     <Card.Body>
-                        <Card.Text className="label">학년 선택</Card.Text>
-                        <ToggleButtonGroup
-                            type="radio"
-                            name="grade-options"
-                            value={grade}
-                            onChange={handleChange}
-                        >
-                            {grades.map((x, idx) => {
-                                return (
-                                    <ToggleButton
-                                        key={idx}
-                                        variant={
-                                            idx + 1 == { grade }
-                                                ? 'dark'
-                                                : 'outline-dark'
-                                        }
-                                        id={`grade-btn-${idx + 1}`}
-                                        value={idx + 1}
-                                    >
-                                        {x.name}
-                                    </ToggleButton>
-                                );
-                            })}
-                        </ToggleButtonGroup>
-
-                        <div className="tableWrap">
-                            <br />
-                            <Card.Text className="label">호실 현황</Card.Text>
-                            <DataTable
-                                className="dormStatusTable"
-                                columns={columns}
-                                data={tableData}
-                                order={[0, 'asc']}
-                            />
-                        </div>
+                        <article className="dormInfo">
+                            <h3>기숙사 정보</h3>
+                            <ul>
+                                <li>이름(학번): 홍길동(20230001)</li>
+                                <li>배정현황: 송죽관 101호</li>
+                                <li>침대위치: 상단</li>
+                            </ul>
+                        </article>
+                        <article className="rommateInfo">
+                            <h3>룸메이트 정보</h3>
+                            <ul>
+                                <li>김성찬(2103): 010-7153-1021</li>
+                                <li>김동원(2101): 010-1234-5678</li>
+                            </ul>
+                        </article>
                     </Card.Body>
                 </Card>
             </div>
