@@ -123,7 +123,7 @@ export const config = [
                     {
                         pathKey: pathKeys.dorm.myDorm.repair(),
                         icon: 'flag',
-                        name: '내 기숙사 고장 신고',
+                        name: '기숙사 시설 수리 신청',
                     },
                 ],
             },

@@ -31,21 +31,25 @@ function MyDorm_View() {
                     <Card.Body>
                         <>
                             <article className="dormInfo">
-                                <h3>기숙사 정보</h3>
+                                <h3>배정현황</h3>
                                 <ul>
+                                    <li>
+                                        학기: {dormInfo.year}{' '}
+                                        {dormInfo.semester}학기
+                                    </li>
                                     <li>
                                         이름(학번): {dormInfo.name}(
                                         {dormInfo.stuid})
                                     </li>
                                     <li>
-                                        배정현황: {dormInfo.dorm_name}{' '}
+                                        배정기숙사: {dormInfo.dorm_name}{' '}
                                         {dormInfo.room_name}호
                                     </li>
                                     <li>침대위치: {dormInfo.bedPosition}</li>
                                 </ul>
                             </article>
                             <article className="rommateInfo">
-                                <h3>룸메이트 정보</h3>
+                                <h4>룸메이트</h4>
                                 <ul>
                                     {dormInfo.roommates &&
                                     dormInfo.roommates.length > 0 ? (
@@ -53,8 +57,12 @@ function MyDorm_View() {
                                             (roommate, index) => (
                                                 <li key={index}>
                                                     {roommate.name}(
-                                                    {roommate.stuid}):
-                                                    {roommate.phone}
+                                                    {roommate.stuid}):{' '}
+                                                    {/* phone number format */}
+                                                    {roommate.phone_number.replace(
+                                                        /(\d{3})(\d{4})(\d{4})/,
+                                                        '$1-$2-$3'
+                                                    )}
                                                 </li>
                                             )
                                         )

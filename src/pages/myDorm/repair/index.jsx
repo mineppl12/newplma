@@ -27,6 +27,12 @@ function MyDorm_Repair() {
         // axios.get('/api/userInfo').then((res) => {
         //     setUserInfo(res.data);
         // });
+        async function init() {
+            const data = await getData('/api/dorms/reports');
+            dataRef.current = data;
+            setupTable(data);
+        }
+
         init();
         setUser({
             id: 32020,
@@ -36,7 +42,7 @@ function MyDorm_Repair() {
         });
     }, []);
 
-    const handleClickDelete = () => {
+    const handleClickDelete = (id) => {
         MySwal.fire({
             title: '취소',
             text: '정말로 취소하시겠습니까?',
@@ -57,12 +63,6 @@ function MyDorm_Repair() {
         });
     };
 
-    async function init() {
-        const data = await getData('/api/dorms/reports');
-        dataRef.current = data;
-        setupTable(data);
-    }
-
     function setupTable(data) {
         if (!data) return;
 
@@ -78,9 +78,9 @@ function MyDorm_Repair() {
                 image_url,
             } = x;
             return [
-                <Form.Check type="checkbox" key={image_url}>
-                    <Form.Check.Input type="checkbox" isValid />
-                </Form.Check>,
+                // <Form.Check type="checkbox" key={image_url}>
+                //     <Form.Check.Input type="checkbox" isValid />
+                // </Form.Check>,
                 id,
                 room_name,
                 moment(created_at).format('YYYY-MM-DD'),
@@ -103,16 +103,16 @@ function MyDorm_Repair() {
                     variant="danger"
                     size="sm"
                     key={`cancel-${image_url}`}
-                    onClick={handleClickDelete}
+                    onClick={() => handleClickDelete(id)}
                 >
-                    취소
+                    취소/반려
                 </Button>,
             ];
         });
 
         setColumns([
             /// 수리 신청 내역 조회 테이블 컬럼 (형식: {data: '', ...})
-            { data: '선택', orderable: false },
+            // { data: '선택', orderable: false },
             { data: 'ID' },
             { data: '방' },
             { data: '신청 날짜' },
@@ -120,7 +120,7 @@ function MyDorm_Repair() {
             { data: '상세 내용' },
             { data: '상태' },
             { data: '사진' },
-            { data: '#' },
+            { data: '', orderable: false },
         ]);
         setTableData(dataList);
     }
@@ -179,7 +179,7 @@ function MyDorm_Repair() {
             <div className="myDorm-repair">
                 <Card>
                     <Card.Header>
-                        <Card.Title>기숙사 고장 신고</Card.Title>
+                        <Card.Title>기숙사 시설 수리 신청</Card.Title>
                     </Card.Header>
 
                     <Card.Body>
@@ -202,7 +202,7 @@ function MyDorm_Repair() {
                                     as="textarea"
                                     value={description}
                                     onChange={handleChange}
-                                    placeholder="문제를 설명하세요"
+                                    placeholder="수리가 필요한 부분을 설명해주세요"
                                     rows={3}
                                     required
                                 />
@@ -243,10 +243,9 @@ function MyDorm_Repair() {
 
                 <Card>
                     <Card.Header>
-                        <Card.Title>기숙사 고장 신고 내역 조회</Card.Title>
+                        <Card.Title>수리 신청 내역 조회</Card.Title>
                     </Card.Header>
                     <Card.Body>
-                        <p>신고 내역 조회</p>
                         <DataTable
                             columns={columns}
                             data={tableData}
