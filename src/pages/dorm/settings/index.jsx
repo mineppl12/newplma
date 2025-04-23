@@ -34,21 +34,18 @@ function Dorm_Settings() {
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
 
+    const dormUsersRef = useRef();
     const usersRef = useRef();
     const [dormUsers, setDormUsers] = useState([]);
 
     const filteredTableData = tableData.filter(
         (x) =>
-            x[1] == grade &&
-            x[2] == year &&
-            x[3] == semester &&
-            x[4] == dormName
+            x[2] == grade &&
+            x[3] == year &&
+            x[4] == semester &&
+            x[5] == dormName
     );
 
-    // console.log(tableData);
-    const handleChange = (val) => {
-        setGrade(val);
-    };
     const handleStudentClick = (id) => {
         if (id == -1) {
             setDormUsers((prev) => {
@@ -78,8 +75,9 @@ function Dorm_Settings() {
     useEffect(() => {
         async function init(allData = false) {
             const data = await getData('/api/dorms', { allData });
+            dormUsersRef.current = data;
             setDormUsers(data);
-            console.log(data);
+
             const userData = await getData('/api/user', { allData });
             usersRef.current = userData;
 
@@ -88,6 +86,7 @@ function Dorm_Settings() {
             for (let i = 0; i < data.length; i++) {
                 dataList.push([
                     `${String(data[i].room_name)}`,
+                    data[i].room_id,
                     data[i].room_grade,
                     data[i].year,
                     data[i].semester,
@@ -101,6 +100,7 @@ function Dorm_Settings() {
 
             setColumns([
                 { data: '호실', className: 'dt-first', orderable: false },
+                { data: 'room_id', hidden: true },
                 { data: 'grade', hidden: true },
                 { data: 'year', hidden: true },
                 { data: 'semester', hidden: true },
@@ -240,15 +240,25 @@ function Dorm_Settings() {
     };
 
     const handleSave = () => {
-        const data = dormUsers.map((room) => ({
-            room_name: room.room_name,
-            users: room.users.map((user) => {
-                if (user == 'excluded') return null;
-                else if (user == null) return null;
-                else return user.id;
-            }),
-        }));
+        const data = dormUsers
+            .filter(
+                (room) =>
+                    room.year == year &&
+                    room.semester == semester &&
+                    room.dorm_name == dormName
+            )
+            .map((room) => ({
+                room_id: room.room_id,
+                year: room.year,
+                semester: room.semester,
+                users: room.users.map((user) => {
+                    if (user == 'excluded') return null;
+                    else if (user == null) return null;
+                    else return user.id;
+                }),
+            }));
         console.log(data);
+
         axios
             .put('/api/dorms', data)
             .then((res) => {
@@ -257,19 +267,32 @@ function Dorm_Settings() {
             .catch((error) => {
                 console.error(error);
             });
+        return;
     };
 
     useEffect(() => {
+        if (dormUsersRef.current == null) return;
+        const newData = dormUsersRef.current.map((room) => {
+            return {
+                ...room,
+                users: Array.from({ length: 4 }, (_, i) => room.users[i]),
+            };
+        });
+        setDormUsers(newData);
+    }, [year, semester, dormName]);
+
+    useEffect(() => {
+        console.log('update table');
         setTableData((prev) => {
             const newData = prev.map((row, rowIndex) => {
                 const updatedRow = [...row];
                 dormUsers[rowIndex].users.forEach((user, colIndex) => {
                     if (user == 'excluded') {
-                        updatedRow[colIndex + 5] = <strong>제외</strong>; // Adjusted to match the column index
+                        updatedRow[colIndex + 6] = <strong>제외</strong>; // Adjusted to match the column index
                     } else if (user == null) {
-                        updatedRow[colIndex + 5] = ''; // Adjusted to match the column index
+                        updatedRow[colIndex + 6] = ''; // Adjusted to match the column index
                     } else {
-                        updatedRow[colIndex + 5] = user.name; // Adjusted to match the column index
+                        updatedRow[colIndex + 6] = user.name; // Adjusted to match the column index
                     }
                 });
                 return updatedRow;
@@ -301,9 +324,9 @@ function Dorm_Settings() {
                             <select
                                 className="form-select"
                                 value={year}
-                                onChange={(e) =>
-                                    setYear(Number(e.target.value))
-                                }
+                                onChange={(e) => {
+                                    setYear(Number(e.target.value));
+                                }}
                             >
                                 {Array.from(
                                     { length: new Date().getFullYear() - 2024 },
@@ -320,9 +343,9 @@ function Dorm_Settings() {
                             <select
                                 className="form-select"
                                 value={semester}
-                                onChange={(e) =>
-                                    setSemester(Number(e.target.value))
-                                }
+                                onChange={(e) => {
+                                    setSemester(Number(e.target.value));
+                                }}
                             >
                                 <option value={1}>1학기</option>
                                 <option value={2}>2학기</option>
@@ -333,7 +356,9 @@ function Dorm_Settings() {
                             <select
                                 className="form-select"
                                 value={dormName}
-                                onChange={(e) => setDormName(e.target.value)}
+                                onChange={(e) => {
+                                    setDormName(e.target.value);
+                                }}
                             >
                                 <option value="송죽관">송죽관</option>
                                 <option value="동백관">동백관</option>
@@ -346,7 +371,9 @@ function Dorm_Settings() {
                         type="radio"
                         name="grade-options"
                         value={grade}
-                        onChange={handleChange}
+                        onChange={(value) => {
+                            setGrade(value);
+                        }}
                     >
                         {GRADES.map((x, idx) => {
                             return (
@@ -413,7 +440,7 @@ function Dorm_Settings() {
                                                                       dorm.semester ==
                                                                           semester &&
                                                                       dorm.dorm_name ==
-                                                                          dorm &&
+                                                                          dormName &&
                                                                       dorm
                                                                           .users[
                                                                           index
@@ -422,6 +449,9 @@ function Dorm_Settings() {
                                                               ).length
                                                             : null;
 
+                                                    console.log(
+                                                        remainingExcluded
+                                                    );
                                                     return (
                                                         <th key={index}>
                                                             {className}:{' '}
@@ -468,18 +498,20 @@ function Dorm_Settings() {
                         <Button
                             variant="danger"
                             className="me-2"
-                            onClick={() =>
-                                setDormUsers(
-                                    // not void, but empty
-                                    dormUsers.map((room) => ({
-                                        ...room,
-                                        users: Array.from(
-                                            { length: 4 },
-                                            () => null
-                                        ),
-                                    }))
-                                )
-                            }
+                            onClick={() => {
+                                const newData = dormUsersRef.current.map(
+                                    (room) => {
+                                        return {
+                                            ...room,
+                                            users: Array.from(
+                                                { length: 4 },
+                                                (_, i) => room.users[i]
+                                            ),
+                                        };
+                                    }
+                                );
+                                setDormUsers(newData);
+                            }}
                         >
                             초기화
                         </Button>
