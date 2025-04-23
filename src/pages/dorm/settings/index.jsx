@@ -22,7 +22,11 @@ const GRADES = [
 ];
 
 function Dorm_Settings() {
-    const [grade, setGrade] = useState(1);
+    const [grade, setGrade] = useState(3);
+    const [year, setYear] = useState(2025);
+    const [semester, setSemester] = useState(1);
+    const [dormName, setDormName] = useState('송죽관');
+
     const [selectedCell, setSelectedCell] = useState({
         row: 1,
         col: 1,
@@ -33,12 +37,19 @@ function Dorm_Settings() {
     const usersRef = useRef();
     const [dormUsers, setDormUsers] = useState([]);
 
-    const filteredTableData = tableData.filter((x) => x[1] == grade);
+    const filteredTableData = tableData.filter(
+        (x) =>
+            x[1] == grade &&
+            x[2] == year &&
+            x[3] == semester &&
+            x[4] == dormName
+    );
+
+    // console.log(tableData);
     const handleChange = (val) => {
         setGrade(val);
     };
     const handleStudentClick = (id) => {
-        console.log('student id: ', id);
         if (id == -1) {
             setDormUsers((prev) => {
                 const newData = prev.map((item) => ({
@@ -68,17 +79,19 @@ function Dorm_Settings() {
         async function init(allData = false) {
             const data = await getData('/api/dorms', { allData });
             setDormUsers(data);
-
+            console.log(data);
             const userData = await getData('/api/user', { allData });
             usersRef.current = userData;
-            console.log(userData);
 
             const dataList = [];
 
             for (let i = 0; i < data.length; i++) {
                 dataList.push([
-                    `${String(data[i].room_name)}호`,
+                    `${String(data[i].room_name)}`,
                     data[i].room_grade,
+                    data[i].year,
+                    data[i].semester,
+                    data[i].dorm_name,
                     data[i].users[0] ? data[i].users[0].name : '',
                     data[i].users[1] ? data[i].users[1].name : '',
                     data[i].users[2] ? data[i].users[2].name : '',
@@ -89,6 +102,9 @@ function Dorm_Settings() {
             setColumns([
                 { data: '호실', className: 'dt-first', orderable: false },
                 { data: 'grade', hidden: true },
+                { data: 'year', hidden: true },
+                { data: 'semester', hidden: true },
+                { data: 'dorm_name', hidden: true },
                 { data: '1반', orderable: false },
                 { data: '2반', orderable: false },
                 { data: '3반', orderable: false },
@@ -109,6 +125,8 @@ function Dorm_Settings() {
                   (user) =>
                       user.grade == grade &&
                       user.class == selectedCell.col + 1 &&
+                      ((dormName === '송죽관' && user.gender === 'M') ||
+                          (dormName === '동백관' && user.gender === 'W')) &&
                       !dormUsers.some((dorm) => dorm.users.includes(user))
               )
             : [];
@@ -147,19 +165,25 @@ function Dorm_Settings() {
             const prevCell = document.querySelector('.selected');
             if (prevCell) prevCell.classList.remove('selected');
             cell.classList.add('selected');
-            const rowIndex = cell.parentNode.rowIndex;
+
+            const rowIndex = dormUsers.findIndex(
+                (room) =>
+                    room.room_name ==
+                    cell.closest('tr').querySelector('td').innerText
+            );
             const colIndex = cell.cellIndex;
+
             setDormUsers((prev) => {
                 const newData = prev.map((item) => ({
                     ...item,
                     users: [...item.users],
                 }));
-                newData[rowIndex - 1].users[colIndex - 1] = null;
+                newData[rowIndex].users[colIndex - 1] = null;
                 return newData;
             });
 
             setSelectedCell({
-                row: rowIndex - 1,
+                row: rowIndex,
                 col: colIndex - 1,
             });
         }
@@ -181,7 +205,12 @@ function Dorm_Settings() {
             );
 
             for (let room of newData) {
-                if (room.room_grade != grade) continue;
+                if (
+                    room.room_grade != grade ||
+                    room.year != year ||
+                    room.semester != semester
+                )
+                    continue;
                 for (let i = 0; i < room.users.length; i++) {
                     if (room.users[i] === null) {
                         const classIndex = i;
@@ -206,7 +235,6 @@ function Dorm_Settings() {
                 }
             }
 
-            console.log(newData);
             return newData;
         });
     };
@@ -237,11 +265,11 @@ function Dorm_Settings() {
                 const updatedRow = [...row];
                 dormUsers[rowIndex].users.forEach((user, colIndex) => {
                     if (user == 'excluded') {
-                        updatedRow[colIndex + 2] = <strong>제외</strong>; // Adjusted to match the column index
+                        updatedRow[colIndex + 5] = <strong>제외</strong>; // Adjusted to match the column index
                     } else if (user == null) {
-                        updatedRow[colIndex + 2] = ''; // Adjusted to match the column index
+                        updatedRow[colIndex + 5] = ''; // Adjusted to match the column index
                     } else {
-                        updatedRow[colIndex + 2] = user.name; // Adjusted to match the column index
+                        updatedRow[colIndex + 5] = user.name; // Adjusted to match the column index
                     }
                 });
                 return updatedRow;
@@ -267,6 +295,51 @@ function Dorm_Settings() {
                             <Tab eventKey="2" title="2학년"></Tab>
                             <Tab eventKey="3" title="3학년"></Tab>
                         </Tabs> */}
+                    <div className="d-flex flex-row mb-3">
+                        <div className="me-3">
+                            <Card.Text className="label">연도</Card.Text>
+                            <select
+                                className="form-select"
+                                value={year}
+                                onChange={(e) =>
+                                    setYear(Number(e.target.value))
+                                }
+                            >
+                                {Array.from(
+                                    { length: new Date().getFullYear() - 2024 },
+                                    (_, i) => 2025 + i
+                                ).map((yearOption) => (
+                                    <option key={yearOption} value={yearOption}>
+                                        {yearOption}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="me-3">
+                            <Card.Text className="label">학기</Card.Text>
+                            <select
+                                className="form-select"
+                                value={semester}
+                                onChange={(e) =>
+                                    setSemester(Number(e.target.value))
+                                }
+                            >
+                                <option value={1}>1학기</option>
+                                <option value={2}>2학기</option>
+                            </select>
+                        </div>
+                        <div>
+                            <Card.Text className="label">기숙사</Card.Text>
+                            <select
+                                className="form-select"
+                                value={dormName}
+                                onChange={(e) => setDormName(e.target.value)}
+                            >
+                                <option value="송죽관">송죽관</option>
+                                <option value="동백관">동백관</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <Card.Text className="label">학년 선택</Card.Text>
                     <ToggleButtonGroup
@@ -307,7 +380,13 @@ function Dorm_Settings() {
                                                             ? dormUsers.filter(
                                                                   (dorm) =>
                                                                       dorm.room_grade ==
-                                                                      grade
+                                                                          grade &&
+                                                                      dorm.year ==
+                                                                          year &&
+                                                                      dorm.semester ==
+                                                                          semester &&
+                                                                      dorm.dorm_name ==
+                                                                          dormName
                                                               ).length -
                                                               usersRef.current.filter(
                                                                   (user) =>
@@ -315,17 +394,33 @@ function Dorm_Settings() {
                                                                           grade &&
                                                                       user.class ==
                                                                           index +
-                                                                              1
+                                                                              1 &&
+                                                                      ((dormName ===
+                                                                          '송죽관' &&
+                                                                          user.gender ===
+                                                                              'M') ||
+                                                                          (dormName ===
+                                                                              '동백관' &&
+                                                                              user.gender ===
+                                                                                  'W'))
                                                               ).length -
                                                               dormUsers.filter(
                                                                   (dorm) =>
+                                                                      dorm.room_grade ==
+                                                                          grade &&
+                                                                      dorm.year ==
+                                                                          year &&
+                                                                      dorm.semester ==
+                                                                          semester &&
+                                                                      dorm.dorm_name ==
+                                                                          dorm &&
                                                                       dorm
                                                                           .users[
                                                                           index
                                                                       ] ==
-                                                                      'excluded'
+                                                                          'excluded'
                                                               ).length
-                                                            : 0;
+                                                            : null;
 
                                                     return (
                                                         <th key={index}>

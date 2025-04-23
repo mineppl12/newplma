@@ -1,4 +1,3 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 
 import moment from 'moment';
@@ -9,7 +8,6 @@ import './index.scss';
 import { Card, Badge, Button, Dropdown } from 'react-bootstrap';
 import DataTable from '~shared/ui/datatable';
 
-const TITLE = import.meta.env.VITE_TITLE;
 const userID = 34084; // 32067
 
 function MyPoints_View() {
@@ -26,23 +24,30 @@ function MyPoints_View() {
     ]);
 
     useEffect(() => {
+        async function init() {
+            const userInfoData = await getData('/api/points/user_history', {
+                userID,
+            });
+            if (userInfoData['msg']) return;
+
+            const { name, stuid, plus, minus } = userInfoData;
+            const etc = 0;
+            setUserInfo({
+                name,
+                stuid,
+                plus,
+                minus,
+                etc,
+                points: plus - minus,
+            });
+
+            dataRef.current = userInfoData;
+
+            setupTable(userInfoData);
+        }
+
         init();
     }, []);
-
-    async function init() {
-        const userInfoData = await getData('/api/points/user_history', {
-            userID,
-        });
-        if (userInfoData['msg']) return;
-
-        const { name, stuid, plus, minus, history } = userInfoData;
-        const etc = 0;
-        setUserInfo({ name, stuid, plus, minus, etc, points: plus - minus });
-
-        dataRef.current = userInfoData;
-
-        setupTable(userInfoData);
-    }
 
     function setupTable(data) {
         if (!data) return;
@@ -70,7 +75,8 @@ function MyPoints_View() {
                 id,
                 moment(date).format('YYYY-MM-DD'),
                 teacher.name,
-                <a href="#">
+
+                <a key={`href_${idx}`} href="#">
                     {name} ({stuid})
                 </a>,
                 <>
@@ -84,7 +90,7 @@ function MyPoints_View() {
                     ? reason_caption.substring(0, 40) + '...'
                     : reason_caption,
                 moment(act_date).format('YYYY-MM-DD'),
-                <Button variant="danger" size="sm">
+                <Button key={`objection_${idx}`} variant="danger" size="sm">
                     이의 제기
                 </Button>,
             ];
