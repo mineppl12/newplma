@@ -142,7 +142,7 @@ function MyDorm_Repair() {
             <div className="myDorm-repair">
                 <Card>
                     <Card.Header>
-                        <Card.Title>기숙사 수리 요청 관리</Card.Title>
+                        <Card.Title>기숙사 수리 신청 관리</Card.Title>
                     </Card.Header>
                     <Card.Body>
                         <p>수리 신청 내역 조회</p>
