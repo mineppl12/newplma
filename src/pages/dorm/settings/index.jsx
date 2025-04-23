@@ -27,10 +27,7 @@ function Dorm_Settings() {
     const [semester, setSemester] = useState(1);
     const [dormName, setDormName] = useState('송죽관');
 
-    const [selectedCell, setSelectedCell] = useState({
-        row: 1,
-        col: 1,
-    });
+    const [selectedCell, setSelectedCell] = useState(null);
     const [columns, setColumns] = useState([]);
     const [tableData, setTableData] = useState([]);
 
@@ -47,6 +44,7 @@ function Dorm_Settings() {
     );
 
     const handleStudentClick = (id) => {
+        if (selectedCell == null) return;
         if (id == -1) {
             setDormUsers((prev) => {
                 const newData = prev.map((item) => ({
@@ -115,48 +113,6 @@ function Dorm_Settings() {
 
         init();
     }, []);
-
-    const renderStudentsGrid = () => {
-        const rows = [];
-        const perRow = 5;
-
-        const students = usersRef.current
-            ? usersRef.current.filter(
-                  (user) =>
-                      user.grade == grade &&
-                      user.class == selectedCell.col + 1 &&
-                      ((dormName === '송죽관' && user.gender === 'M') ||
-                          (dormName === '동백관' && user.gender === 'W')) &&
-                      !dormUsers.some((dorm) => dorm.users.includes(user))
-              )
-            : [];
-
-        students.unshift({
-            id: -1,
-            name: <strong>제외</strong>,
-            stuid: '',
-        });
-
-        for (let i = 0; i < students.length; i += perRow) {
-            const rowItems = students.slice(i, i + perRow);
-            rows.push(
-                <Row key={'row_' + i} className="mb-2" xs={5}>
-                    {rowItems.map((student) => (
-                        <Col
-                            key={student.id}
-                            onClick={() => handleStudentClick(student.id)}
-                        >
-                            <Button variant={'light'}>
-                                {student.stuid} {student.name}
-                            </Button>
-                        </Col>
-                    ))}
-                </Row>
-            );
-        }
-
-        return rows;
-    };
 
     const handleCellClick = (e) => {
         const cell = e.target.closest('td');
@@ -282,7 +238,12 @@ function Dorm_Settings() {
     }, [year, semester, dormName]);
 
     useEffect(() => {
+        setSelectedCell(null);
+    }, [grade, year, semester, dormName]);
+
+    useEffect(() => {
         console.log('update table');
+
         setTableData((prev) => {
             const newData = prev.map((row, rowIndex) => {
                 const updatedRow = [...row];
@@ -483,7 +444,71 @@ function Dorm_Settings() {
                         </div>
 
                         <div className="studentsGrid">
-                            {renderStudentsGrid()}
+                            {(() => {
+                                const rows = [];
+                                const perRow = 5;
+
+                                if (selectedCell == null) {
+                                    return <div>셀을 선택해주세요</div>;
+                                }
+                                const students = usersRef.current
+                                    ? usersRef.current.filter(
+                                          (user) =>
+                                              user.grade == grade &&
+                                              user.class ==
+                                                  selectedCell.col + 1 &&
+                                              ((dormName === '송죽관' &&
+                                                  user.gender === 'M') ||
+                                                  (dormName === '동백관' &&
+                                                      user.gender === 'W')) &&
+                                              !dormUsers.some((dorm) =>
+                                                  dorm.users.includes(user)
+                                              )
+                                      )
+                                    : [];
+
+                                students.unshift({
+                                    id: -1,
+                                    name: <strong>제외</strong>,
+                                    stuid: '',
+                                });
+
+                                for (
+                                    let i = 0;
+                                    i < students.length;
+                                    i += perRow
+                                ) {
+                                    const rowItems = students.slice(
+                                        i,
+                                        i + perRow
+                                    );
+                                    rows.push(
+                                        <Row
+                                            key={'row_' + i}
+                                            className="mb-2"
+                                            xs={5}
+                                        >
+                                            {rowItems.map((student) => (
+                                                <Col
+                                                    key={student.id}
+                                                    onClick={() =>
+                                                        handleStudentClick(
+                                                            student.id
+                                                        )
+                                                    }
+                                                >
+                                                    <Button variant={'light'}>
+                                                        {student.stuid}{' '}
+                                                        {student.name}
+                                                    </Button>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    );
+                                }
+
+                                return rows;
+                            })()}
                         </div>
                     </div>
 
