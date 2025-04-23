@@ -105,7 +105,7 @@ function MyDorm_Repair() {
                     key={`cancel-${image_url}`}
                     onClick={() => handleClickDelete(id)}
                 >
-                    취소/반려
+                    취소
                 </Button>,
             ];
         });

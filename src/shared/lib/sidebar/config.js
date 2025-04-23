@@ -105,7 +105,7 @@ export const config = [
                     {
                         pathKey: pathKeys.dorm.repair(),
                         icon: 'flag',
-                        name: '기숙사 고장 접수',
+                        name: '기숙사 수리 요청 관리',
                     },
                 ],
             },
