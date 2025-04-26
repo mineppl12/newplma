@@ -449,7 +449,7 @@ function Dorm_Settings() {
                                 const perRow = 5;
 
                                 if (selectedCell == null) {
-                                    return <div>셀을 선택해주세요</div>;
+                                    return <div>셀을 선택해주세요.</div>;
                                 }
                                 const students = usersRef.current
                                     ? usersRef.current.filter(

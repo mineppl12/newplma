@@ -30,7 +30,7 @@ export const pathKeys = {
             return {
                 link: pathKeys.points.root().concat('apply/'),
                 permission: 'viewPointsApply',
-            }
+            };
         },
         history() {
             return {
@@ -172,12 +172,6 @@ export const pathKeys = {
             return {
                 link: pathKeys.iam.root().concat('accounts/'),
                 permission: 'viewIAMAccounts',
-            };
-        },
-        access() {
-            return {
-                link: pathKeys.iam.root().concat('access/'),
-                permission: 'viewIAMAccess',
             };
         },
     },
